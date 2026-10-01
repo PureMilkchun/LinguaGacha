@@ -1,3 +1,4 @@
+import { ko_kr_file_page } from "./file-page";
 import { ko_kr_skills_page } from "./skills-page";
 import { ko_kr_agent_page } from "./agent-page";
 import { ko_kr_agent_runtime } from "./agent-runtime";
@@ -35,6 +36,7 @@ export const ko_kr_messages = {
   glossary_page: ko_kr_glossary_page,
   laboratory_page: ko_kr_laboratory_page,
   log_window_page: ko_kr_log_window_page,
+  file_page: ko_kr_file_page,
   model_page: ko_kr_model_page,
   post_translation_replacement_page: ko_kr_post_translation_replacement_page,
   pre_translation_replacement_page: ko_kr_pre_translation_replacement_page,

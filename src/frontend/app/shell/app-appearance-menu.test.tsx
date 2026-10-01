@@ -81,7 +81,8 @@ describe("AppAppearanceMenu", () => {
     await render_menu();
     await open_menu();
 
-    expect(find_option("LGBase").hasAttribute("data-checked")).toBe(true);
+    expect(find_option("系统字体").hasAttribute("data-checked")).toBe(true);
+    expect(document.body.textContent).not.toContain("LGBase");
     expect(find_option("跟随系统").hasAttribute("data-checked")).toBe(true);
   });
 

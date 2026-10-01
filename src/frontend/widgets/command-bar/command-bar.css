@@ -55,3 +55,23 @@
   );
   opacity: 1;
 }
+
+@media (max-width: 900px) {
+  .command-bar__toolbar {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .command-bar__hint {
+    width: 100%;
+    text-align: left;
+  }
+  .command-bar__actions {
+    gap: 4px;
+  }
+  .command-bar__group {
+    flex-wrap: wrap;
+  }
+  .command-bar__separator {
+    display: none;
+  }
+}

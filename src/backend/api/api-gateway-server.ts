@@ -24,6 +24,8 @@ import type { ApiGatewayStartResult } from "./api-types";
 import { api_error_envelope, normalize_api_error } from "./api-error";
 import { register_post_json_route, register_api_request } from "./api-request";
 import { register_api_routes, type ApiRouteContext } from "./api-routes";
+import { register_static_assets } from "./static-assets";
+import { create_access_token_middleware } from "./access-token";
 
 const CORS_ALLOWED_HEADERS = "Content-Type"; // 上传与 JSON 请求共用标准 Content-Type，renderer 不依赖私有请求头
 
@@ -36,6 +38,11 @@ export interface ApiGatewayServerOptions {
   skillsService: AgentSkillsApi;
   personalityService: Pick<AgentPersonalityService, "read" | "save">;
   eventStream: ApiStreamHub;
+  staticRoot?: string; // 服务器部署托管渲染器构建产物；桌面部署不传，Gateway 只提供 /api/*
+  mobileLayerRoot?: string; // 移动端适配层目录；不传则不注入，桌面行为完全不变
+  port?: number; // 监听端口；省略时取 0（随机端口，桌面部署依赖该行为）
+  host?: string; // 监听地址；省略时只绑回环。局域网部署需要显式绑到 0.0.0.0
+  accessToken?: string; // 可选访问令牌；设置后 /api/* 需要令牌，健康检查除外
 }
 
 /**
@@ -80,8 +87,10 @@ export class ApiGatewayServer {
       pending_server = serve(
         {
           fetch: app.fetch,
-          hostname: BACKEND_API_HOST,
-          port: 0,
+          hostname: this.options.host ?? BACKEND_API_HOST,
+          // 桌面部署用 0 取随机端口；服务器部署必须固定端口，否则容器外
+          // （例如 cloudflared 的 ingress 规则）无法知道该连哪里。
+          port: this.options.port ?? 0,
         },
         () => {
           pending_server.off("error", handle_start_error);
@@ -142,6 +151,12 @@ export class ApiGatewayServer {
     const services = this.options.backendServices;
     const app = new Hono();
 
+    // 令牌校验必须最先注册：未授权请求不应该进入业务处理与请求跟踪。
+    const access_token = this.options.accessToken;
+    if (access_token !== undefined && access_token !== "") {
+      app.use("*", create_access_token_middleware(access_token));
+    }
+
     app.use(
       "*",
       async (context, next) =>
@@ -177,6 +192,17 @@ export class ApiGatewayServer {
     };
 
     register_api_routes(route_context);
+
+    // 静态托管必须在 catch-all 之前注册；未传 staticRoot 时桌面行为完全不变。
+    const static_root = this.options.staticRoot;
+    if (static_root !== undefined && static_root !== "") {
+      const mobile_root = this.options.mobileLayerRoot;
+      register_static_assets(
+        app,
+        static_root,
+        mobile_root === undefined || mobile_root === "" ? undefined : { root: mobile_root },
+      );
+    }
 
     app.all("*", (context) => {
       const route_path = context.req.path;

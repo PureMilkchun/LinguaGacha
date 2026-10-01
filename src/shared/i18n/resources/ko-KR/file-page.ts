@@ -1,0 +1,33 @@
+export const ko_kr_file_page = {
+  picker: {
+    search: "현재 폴더 검색",
+    filename: "파일 이름",
+    selected: "파일 {COUNT}개 선택됨",
+    current_directory: "현재 폴더 선택",
+  },
+  title: "파일",
+  tab: { files: "파일", trash: "휴지통" },
+  action: {
+    download: "다운로드",
+    up: "상위 폴더",
+    new_folder: "새 폴더",
+    upload: "파일 업로드",
+    create_project: "선택한 파일로 프로젝트 만들기",
+    rename: "이름 바꾸기",
+    delete: "휴지통으로 이동",
+    restore: "복원",
+    purge: "완전히 삭제",
+    purge_all: "휴지통 비우기",
+  },
+  kind: { directory: "폴더" },
+  state: { selected: "선택됨" },
+  empty: { files: "이 폴더는 비어 있습니다", trash: "휴지통이 비어 있습니다" },
+  upload: { done: "완료", failed: "실패" },
+  prompt: { project_name: "프로젝트 이름", new_folder: "폴더 이름", rename: "새 이름" },
+  notice: {
+    project_created: "프로젝트를 만들었습니다",
+    folder_created: "폴더를 만들었습니다",
+    moved_to_trash: "휴지통으로 이동했습니다",
+    renamed: "이름을 바꿨습니다",
+  },
+};

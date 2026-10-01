@@ -8,55 +8,6 @@
 @source "../../node_modules/@streamdown/cjk/dist/*.js";
 @source "../../node_modules/@streamdown/math/dist/*.js";
 
-@font-face {
-  font-family: "LGMono";
-  src: url("/fonts/MonaspaceNeon.woff2") format("woff2");
-  font-weight: 400 700;
-  font-style: normal;
-  font-stretch: 100%;
-  size-adjust: 90%;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "LGMono";
-  src: url("/fonts/MonaspaceNeon.woff2") format("woff2");
-  font-weight: 400 700;
-  font-style: italic;
-  font-stretch: 100%;
-  font-variation-settings: "slnt" -11;
-  size-adjust: 90%;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "LGBaseFont";
-  src: url("/fonts/LGBaseFont-Regular.woff2") format("woff2");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "LGBaseFont";
-  src: url("/fonts/LGBaseFont-Bold.woff2") format("woff2");
-  font-weight: 500 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-/*
- * Twemoji graphics: https://github.com/jdecked/twemoji (CC-BY 4.0).
- * The sanitized cmap only exposes Unicode emoji/components; ASCII keycaps use FE0F UVS.
- */
-@font-face {
-  font-family: "Twemoji";
-  src: url("/fonts/Twemoji.woff2") format("woff2");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
 @custom-variant dark (&:is(.dark *));
 
 :root {
@@ -75,11 +26,8 @@
   --ui-font-size-36: calc(var(--ui-font-size-base) + 22px);
   --ui-font-size-42: calc(var(--ui-font-size-base) + 28px);
 
-  /* Font preferences only change the text fallback chain; Twemoji remains the emoji provider. */
-  --ui-font-family-text: "LGMono", "LGBaseFont";
-  --ui-font-family-base:
-    "Twemoji", var(--ui-font-family-text), "Segoe UI", "Microsoft YaHei UI", "PingFang SC",
-    system-ui, sans-serif;
+  /* 统一使用设备默认 UI 字体，文字、代码及 emoji 均由系统提供。 */
+  --ui-font-family-base: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-family: var(--ui-font-family-base);
   line-height: 1.5;
   font-weight: 400;
@@ -197,10 +145,6 @@
   --ui-table-divider-soft: color-mix(in srgb, var(--border) 55%, transparent);
   --ui-table-hover: color-mix(in srgb, var(--accent) 78%, transparent);
   --ui-table-selected: color-mix(in srgb, var(--accent) 96%, transparent);
-}
-
-:root[data-lg-base-font="disabled"] {
-  --ui-font-family-text: "LGMono";
 }
 
 html,
@@ -675,9 +619,100 @@ a,
   }
 }
 
+/* 触屏控件保持可点尺寸；16px 输入字号避免 iOS 聚焦时放大页面。 */
+@media (max-width: 900px) {
+  :root {
+    --ui-page-pad-x: 12px;
+    --ui-page-pad-top: 12px;
+    --ui-page-pad-bottom: max(12px, env(safe-area-inset-bottom, 0px));
+    --ui-page-gap: 12px;
+  }
+
+  [data-slot="button"],
+  [data-slot="select-trigger"],
+  [data-slot="toggle-group-item"] {
+    min-height: 44px;
+  }
+  [data-slot="button"][data-size^="icon"] {
+    min-width: 44px;
+  }
+  [data-slot="input"],
+  [data-slot="textarea"],
+  .cm-editor {
+    font-size: var(--ui-font-size-16);
+  }
+  [data-slot="input"] {
+    min-height: 44px;
+  }
+  [role="menuitem"],
+  [role="menuitemradio"],
+  [role="option"] {
+    min-height: 44px;
+  }
+  [data-slot="dialog-content"] {
+    top: calc(var(--lg-visual-height, 100dvh) / 2);
+    width: calc(100vw - 24px);
+    max-width: calc(100vw - 24px);
+    max-height: calc(
+      var(--lg-visual-height, 100dvh) - 24px - env(safe-area-inset-top, 0px) -
+        env(safe-area-inset-bottom, 0px)
+    );
+  }
+  [data-slot="dialog-content"] > .app-page-dialog__body {
+    padding: 16px;
+  }
+  [data-slot="dialog-content"] > .app-page-dialog__body:has(.model-page__dialog-scroll) {
+    padding: 0;
+  }
+  .app-page-dialog__footer {
+    flex-shrink: 0;
+    padding: 12px 16px;
+  }
+  [data-slot="alert-dialog-content"] {
+    max-height: calc(var(--lg-visual-height, 100dvh) - 24px);
+    overflow-y: auto;
+  }
+}
+
 :root[data-lg-font-size="larger"] {
   --ui-font-size-base: 15px;
 }
 :root[data-lg-font-size="largest"] {
   --ui-font-size-base: 16px;
+}
+
+/* 关键移动布局随应用发布；外部适配脚本加载失败时菜单仍可使用。 */
+@media (max-width: 900px) {
+  /*
+   * 100vh 在手机上等于「地址栏收起时」的高度，地址栏一出现就会把
+   * 底部输入框顶出屏幕。dvh 跟随实际可视高度变化。
+   */
+  .app-shell {
+    /* 浏览器桥接将标题栏高度设为 0；窄屏须留出菜单入口，并覆盖根元素的内联值。 */
+    --titlebar-height: 44px !important;
+    height: var(--lg-visual-height, 100dvh);
+    /* 用 safe-area 包住整个壳层，比逐处 padding 更不容易漏 */
+    padding-left: env(safe-area-inset-left, 0px);
+    padding-right: env(safe-area-inset-right, 0px);
+  }
+
+  /* viewport-fit=auto 由浏览器避让系统区域；再次叠加 top inset 会在部分 WebView 留白。 */
+  .titlebar {
+    flex-shrink: 0;
+    padding-top: 0;
+  }
+
+  /* 工作区内容避让左右手势条 */
+  .workspace-frame {
+    padding-left: max(var(--ui-page-pad-x), env(safe-area-inset-left, 0px));
+    padding-right: max(var(--ui-page-pad-x), env(safe-area-inset-right, 0px));
+  }
+
+  /* 触控目标下限：44px 是 iOS/Android 的通行可点按下限 */
+  .titlebar button,
+  .sidebar-row,
+  .tab-bar__tab,
+  button[role="tab"] {
+    min-height: 44px;
+  }
 }

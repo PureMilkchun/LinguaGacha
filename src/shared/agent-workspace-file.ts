@@ -2,7 +2,7 @@
 export type AgentFile = Readonly<{
   path: string; // 规范化并逐段编码的工作区相对路径，作为标签身份。
   name: string; // 上传文件保留原名称，其它文件使用工作区名称。
-  preview: "markdown" | "image" | null;
+  preview: "markdown" | "image" | "text" | null;
   kind: "file" | "directory";
 }>;
 
@@ -18,6 +18,17 @@ export function is_agent_markdown_path(href: string): boolean {
     return /\.(?:md|markdown)$/iu.test(decodeURIComponent(href.split(/[?#]/u, 1)[0]!));
   } catch {
     return false; // 损坏的编码仍交给既有链接入口报告校验错误。
+  }
+}
+
+/** 普通文本以原始文本显示，不把 JSON、CSV 或 HTML 当作 Markdown/活动页面。 */
+export function is_agent_text_path(href: string): boolean {
+  try {
+    return /\.(?:txt|text|json|jsonl|csv|tsv|log|xml|yaml|yml|html|htm)$/iu.test(
+      decodeURIComponent(href.split(/[?#]/u, 1)[0]!),
+    );
+  } catch {
+    return false;
   }
 }
 

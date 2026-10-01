@@ -939,7 +939,9 @@ describe("AgentConversation", () => {
     const body = view.querySelector(".agent-page__composer-slot")!;
     expect(body.hasAttribute("inert")).toBe(true);
     const follow_button = get_button_by_label(view, "agent_page.action.follow_latest");
-    expect(follow_button.closest("[inert]")).toBe(view.querySelector(".agent-page__status-zone"));
+    // 跟随是阅读操作，浮层不再属于锁定的输入区域。
+    expect(follow_button.closest("[inert]")).toBeNull();
+    expect(follow_button.closest(".agent-page__follow-floating")).not.toBeNull();
     expect(follow_button.getAttribute("aria-pressed")).toBe("true");
     expect(document.activeElement).toBe(view.querySelector(".agent-decision__prompt"));
     await act(async () => {

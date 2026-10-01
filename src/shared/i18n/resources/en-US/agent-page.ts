@@ -4,6 +4,7 @@ export const en_us_agent_page = {
     view: "View",
     save_as: "Save as",
     read_failed: "Unable to read document",
+    back_to_conversation: "Back to chat",
   },
   batch_translation_model: {
     follow: "Follow Agent",
@@ -108,6 +109,7 @@ export const en_us_agent_page = {
     error: "Context compaction failed …",
   },
   action: {
+    tools: "More tools",
     send: "Send",
     stop: "Stop",
     applying: "Applying project changes; this cannot be stopped until completion",

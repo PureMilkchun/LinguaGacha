@@ -40,7 +40,6 @@ export function AppAppearanceMenu(props: AppAppearanceMenuProps): JSX.Element {
   const {
     font_size_preference,
     set_font_size_preference,
-    font_preference,
     set_font_preference,
     set_theme_preference,
     theme_preference,
@@ -71,16 +70,13 @@ export function AppAppearanceMenu(props: AppAppearanceMenuProps): JSX.Element {
             <AppDropdownMenuLabel>{font_label}</AppDropdownMenuLabel>
             <AppDropdownMenuRadioGroup
               aria-label={font_label}
-              value={font_preference}
+              value="system"
               onValueChange={(preference) => {
                 if (is_font_preference(preference)) {
                   set_font_preference(preference);
                 }
               }}
             >
-              <AppDropdownMenuRadioItem value="lg-base">
-                {t("app.navigation_action.font_option.lg_base")}
-              </AppDropdownMenuRadioItem>
               <AppDropdownMenuRadioItem value="system">
                 {t("app.navigation_action.font_option.system")}
               </AppDropdownMenuRadioItem>

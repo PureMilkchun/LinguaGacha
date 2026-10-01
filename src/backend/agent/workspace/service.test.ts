@@ -175,6 +175,24 @@ describe("AgentWorkspaceService", () => {
     expect(fixture.pick_save_path).toHaveBeenCalledWith(file.name);
   });
 
+  it.each(["txt", "json", "csv"])("成果 %s 可以预览原文并完整下载", async (extension) => {
+    const fixture = await create_file_fixture(temp_dir);
+    const text = '{"name":"报告"}\n第一行,第二列\n';
+    const href = `work/结果%20%23%20%2523.${extension}`;
+    fs.writeFileSync(path.join(fixture.workspace_root, "work", `结果 # %23.${extension}`), text);
+    expect(fixture.service.describe_file(href)).toMatchObject({ preview: "text", kind: "file" });
+    expect((await fixture.service.read_document(href)).content).toBe(text);
+    const file = fixture.service.open_file(href);
+    const chunks: Buffer[] = [];
+    for await (const chunk of file.stream) chunks.push(Buffer.from(chunk));
+    expect(Buffer.concat(chunks).toString("utf8")).toBe(text);
+    expect(file.name).toBe(`结果 # %23.${extension}`);
+    expect(file.size).toBe(Buffer.byteLength(text));
+    expect(fixture.pick_save_path).not.toHaveBeenCalled();
+    expect(() => fixture.service.open_file("../outside.txt")).toThrow();
+    expect(() => fixture.service.open_file("work/")).toThrow();
+  });
+
   it("文档预览返回规范路径和完整文本，复用编码探测且无需保存对话框", async () => {
     const fixture = await create_file_fixture(temp_dir);
     fs.writeFileSync(

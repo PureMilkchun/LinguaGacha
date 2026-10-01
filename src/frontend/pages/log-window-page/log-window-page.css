@@ -2,6 +2,7 @@
   display: flex;
   width: 100vw;
   height: 100vh;
+  height: var(--lg-visual-height, 100dvh);
   flex-direction: column;
   overflow: hidden;
   background: var(--background);
@@ -11,6 +12,8 @@
 .log-window-page__titlebar {
   position: relative;
   flex: 0 0 auto;
+  /* 浏览器宿主提供 0px 原生标题栏高度，日志自己的标题仍需占据完整一行。 */
+  min-height: 40px;
 }
 
 .log-window-page__titlebar::after {
@@ -71,6 +74,7 @@
 
 .log-window-page__content--detail-expanded {
   grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
 }
 
 .log-window-page__content--detail-expanded .log-window-page__table-card {
@@ -79,6 +83,7 @@
 
 .log-window-page__table-card,
 .log-window-page__detail {
+  min-width: 0;
   min-height: 0;
   border-radius: var(--ui-radius-card);
 }
@@ -206,4 +211,16 @@
   padding: 12px;
   color: var(--muted-foreground);
   font-size: var(--ui-font-size-13);
+}
+
+@media (max-width: 900px) {
+  .log-window-page__titlebar {
+    min-height: 44px;
+  }
+  .log-window-page__content {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .log-window-page__content:not(.log-window-page__content--detail-expanded) {
+    grid-template-rows: minmax(0, 7fr) minmax(0, 3fr);
+  }
 }

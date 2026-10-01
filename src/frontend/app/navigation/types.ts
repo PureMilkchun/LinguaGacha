@@ -6,6 +6,7 @@ export type RouteId =
   | "project-home"
   | "model"
   | "agent"
+  | "files"
   | "proofreading"
   | "workbench"
   | "basic-settings"

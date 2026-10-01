@@ -9,7 +9,7 @@ import {
 } from "react";
 import type { AgentFile } from "@shared/agent-workspace-file";
 import type { AgentWorkspaceLinkResult } from "@shared/agent";
-import { api_fetch } from "@frontend/app/desktop/desktop-api";
+import { api_fetch, is_browser_host } from "@frontend/app/desktop/desktop-api";
 import { push_toast } from "@frontend/app/feedback/desktop-toast";
 import { resolve_visible_error_message } from "@frontend/app/feedback/visible-error-message";
 import { useI18n } from "@frontend/app/locale/locale-context";
@@ -20,6 +20,7 @@ import {
   AppContextMenuItem,
 } from "@frontend/widgets/app-context-menu";
 import { AgentFileContext } from "./agent-file-context";
+import { download_agent_file } from "./agent-file-download";
 
 /** 文件链接、正文图片和文件附件共用唯一动作入口。 */
 export function AgentFileTrigger({
@@ -51,7 +52,11 @@ export function AgentFileTrigger({
     );
   };
   /** 保存对话框返回前合并重复保存，取消时安静结束。 */
-  const save = async (): Promise<void> => {
+  const save = async (kind: AgentFile["kind"] = "file"): Promise<void> => {
+    if (kind === "file" && is_browser_host() && context?.session_id) {
+      download_agent_file(path, context.session_id);
+      return;
+    }
     if (saving.current) return;
     saving.current = true;
     try {
@@ -84,7 +89,7 @@ export function AgentFileTrigger({
         set_file(next);
         set_open(next.kind === "file");
       } else if (next.preview) context.open_file(path, next);
-      else await save();
+      else await save(next.kind);
     } catch (error) {
       if (!request.signal.aborted) report(error);
     } finally {

@@ -78,6 +78,17 @@ describe("AgentTaskToolbar", () => {
     expect(document.querySelector('[role="menu"]')).toBeNull();
   });
 
+  it("次要操作默认折叠，展开后仍可操作，锁定后收起", async () => {
+    const view = await render({});
+    const details = view.querySelector<HTMLDetailsElement>(".agent-composer__tools")!;
+    expect(details.open).toBe(false);
+    await act(async () => details.querySelector("summary")!.click());
+    expect(details.open).toBe(true);
+    expect(details.querySelector(".agent-composer__export")).not.toBeNull();
+    await render({ locked: true });
+    expect(details.open).toBe(false);
+  });
+
   /** 工具栏在普通输入框有焦点时仍响应快捷键。 */
   async function render(
     props: Partial<ComponentProps<typeof AgentTaskToolbar>>,

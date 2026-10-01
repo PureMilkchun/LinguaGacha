@@ -303,6 +303,15 @@ export class AgentService {
     return image;
   }
 
+  /** 成果下载与预览使用同一个当前会话边界。 */
+  public read_workspace_file(
+    href: string | null,
+    session_id: string | null,
+  ): ReturnType<AgentWorkspacePort["open_file"]> {
+    this.assert_workspace_preview_session(session_id);
+    return this.workspace.open_file(href);
+  }
+
   /** 清理期间拒绝读取，清理后按对话身份拒绝迟到请求。 */
   private assert_workspace_preview_session(session_id: unknown): void {
     this.assert_not_disposed();

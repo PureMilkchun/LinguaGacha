@@ -1,6 +1,7 @@
 import type { zh_cn_glossary_page } from "../zh-CN/glossary-page";
 import type { LocaleMessageSchema } from "../../types";
 export const ja_jp_glossary_page = {
+  columns: "表示する列",
   title: "用語集",
   toggle: {
     tooltip:

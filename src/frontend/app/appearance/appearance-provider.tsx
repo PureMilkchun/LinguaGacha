@@ -32,12 +32,12 @@ function resolve_theme_mode(resolved_theme: string | undefined): ResolvedThemeMo
 
 /** 将持久化字体开关转换为界面偏好。 */
 function read_font_preference(): FontPreference {
-  return window.localStorage.getItem(FONT_FAMILY_STORAGE_KEY) === "disabled" ? "system" : "lg-base";
+  return "system"; // 升级时忽略旧字体开关，避免旧用户重新启用内置字体。
 }
 
 /** 字体偏好写回既有存储值，供其他窗口同步。 */
-function serialize_font_preference(preference: FontPreference): "enabled" | "disabled" {
-  return preference === "lg-base" ? "enabled" : "disabled";
+function serialize_font_preference(_preference: FontPreference): "disabled" {
+  return "disabled";
 }
 
 /** 汇合主题组件状态与字体偏好，投影到页面和宿主。 */
@@ -77,7 +77,7 @@ function AppearanceStateProvider({ children }: { children: ReactNode }): JSX.Ele
         set_font_size_preference(normalize_font_size(event.newValue));
       }
       if (event.key === FONT_FAMILY_STORAGE_KEY) {
-        set_font_preference(event.newValue === "disabled" ? "system" : "lg-base");
+        set_font_preference("system");
       }
     }
 
@@ -99,7 +99,7 @@ function AppearanceStateProvider({ children }: { children: ReactNode }): JSX.Ele
     font_size_preference,
     set_font_size_preference,
     set_theme_preference: setTheme,
-    set_font_preference,
+    set_font_preference: () => set_font_preference("system"),
   };
 
   return <AppearanceContext.Provider value={value}>{children}</AppearanceContext.Provider>;

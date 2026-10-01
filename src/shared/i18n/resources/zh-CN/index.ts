@@ -1,3 +1,4 @@
+import { zh_cn_file_page } from "./file-page";
 import { zh_cn_skills_page } from "./skills-page";
 import { zh_cn_batch_translation } from "./batch-translation";
 import { zh_cn_agent_page } from "./agent-page";
@@ -32,6 +33,7 @@ export const zh_cn_messages = {
   glossary_page: zh_cn_glossary_page,
   laboratory_page: zh_cn_laboratory_page,
   log_window_page: zh_cn_log_window_page,
+  file_page: zh_cn_file_page,
   model_page: zh_cn_model_page,
   post_translation_replacement_page: zh_cn_post_translation_replacement_page,
   pre_translation_replacement_page: zh_cn_pre_translation_replacement_page,

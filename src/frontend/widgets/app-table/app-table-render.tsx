@@ -294,7 +294,8 @@ export function AppTableSortableRow<Row>(props: AppTableSortableRowProps<Row>): 
 
   /** 同一 DOM 同时供排序测量和表格选区定位使用。 */
   const set_row_element = (row_element: HTMLTableRowElement | null): void => {
-    setNodeRef(row_element);
+    // 没有拖动入口时不注册拖动节点，避免库把可编辑行标记为禁用按钮。
+    setNodeRef(props.drag_enabled ? row_element : null);
     props.register_row_element(props.row_id, row_element);
   };
 

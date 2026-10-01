@@ -847,3 +847,37 @@ button.proofreading-page__file-body:hover > .app-badge {
   border-radius: var(--ui-radius-card);
   background: var(--popover);
 }
+
+@media (max-width: 900px) {
+  .proofreading-page {
+    overflow-y: auto;
+  }
+  .proofreading-page__table-host {
+    min-height: 200px;
+  }
+  .proofreading-page__text-preview-trigger {
+    opacity: 1;
+  }
+  .proofreading-page__dialog-scroll {
+    overflow-y: auto;
+    padding: 12px;
+  }
+  .proofreading-page__dialog-form {
+    height: auto;
+    min-height: 0;
+    flex: 0 0 auto;
+  }
+  .proofreading-page__dialog-content-block {
+    grid-template-columns: minmax(0, 1fr);
+    flex: 0 0 auto;
+  }
+  .proofreading-page__dialog-content-section {
+    min-height: 180px;
+  }
+}
+
+.proofreading-page__status-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

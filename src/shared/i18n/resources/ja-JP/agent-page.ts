@@ -6,6 +6,7 @@ export const ja_jp_agent_page = {
     view: "表示",
     save_as: "名前を付けて保存",
     read_failed: "文書を読み込めません",
+    back_to_conversation: "チャットに戻る",
   },
   batch_translation_model: {
     follow: "同じモデル",
@@ -110,6 +111,7 @@ export const ja_jp_agent_page = {
     error: "コンテキストを圧縮できませんでした …",
   },
   action: {
+    tools: "その他のツール",
     send: "送信",
     stop: "停止",
     applying: "プロジェクトの変更を適用中です。完了するまで停止できません",

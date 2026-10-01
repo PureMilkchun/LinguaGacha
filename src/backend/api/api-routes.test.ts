@@ -12,12 +12,15 @@ import { register_api_routes } from "./api-routes";
 const GET_PATHS = new Set([
   "/api/agent/files",
   "/api/agent/workspace/image",
+  "/api/agent/workspace/download",
   "/api/agent/uploads/:id",
   "/api/health",
   "/api/events/stream",
   "/api/agent/snapshot",
   "/api/models/selection",
   "/api/models/catalog/snapshot",
+  // 文件管理的下载走字节流 GET，与上传一起构成唯一的两条非 JSON 路由
+  "/api/files/download",
 ]);
 
 const POST_PATHS = new Set([
@@ -116,6 +119,16 @@ const POST_PATHS = new Set([
   "/api/batch-translation/start",
   "/api/batch-translation/stop",
   "/api/batch-translation/snapshot",
+  // 服务端文件管理：桌面端不使用（它用系统文件对话框），服务器部署下提供上传与目录浏览
+  "/api/files/roots",
+  "/api/files/list",
+  "/api/files/mkdir",
+  "/api/files/rename",
+  "/api/files/delete",
+  "/api/files/trash/list",
+  "/api/files/trash/restore",
+  "/api/files/trash/purge",
+  "/api/files/upload",
 ]);
 
 describe("register_api_routes", () => {

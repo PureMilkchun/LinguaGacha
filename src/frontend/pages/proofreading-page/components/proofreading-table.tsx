@@ -1,3 +1,4 @@
+import { use_is_narrow_viewport } from "@frontend/widgets/interactions/use-is-narrow-viewport";
 import {
   AlertCircle,
   Ban,
@@ -268,6 +269,7 @@ function ProofreadingStatusCell(props: {
 // 把校对页远端窗口模型适配给通用 `AppTable`。
 export function ProofreadingTable(props: ProofreadingTableProps): JSX.Element {
   const { t } = useI18n();
+  const is_narrow = use_is_narrow_viewport();
   // 让状态列 O(1) 判断行级重翻状态。
   const retranslating_row_id_set = useMemo(() => {
     return new Set(props.retranslating_row_ids);
@@ -300,7 +302,7 @@ export function ProofreadingTable(props: ProofreadingTableProps): JSX.Element {
       {
         kind: "drag",
         id: "drag",
-        width: 64,
+        width: is_narrow ? 44 : 64,
         align: "center",
         title: t("app.drag.handle"),
         head_class_name: "proofreading-page__table-drag-head",
@@ -359,7 +361,7 @@ export function ProofreadingTable(props: ProofreadingTableProps): JSX.Element {
         kind: "data",
         id: "status",
         title: t("proofreading_page.fields.status"),
-        width: 108,
+        width: is_narrow ? 80 : 108,
         align: "center",
         sortable: {},
         head_class_name: "proofreading-page__table-status-head",
@@ -367,16 +369,32 @@ export function ProofreadingTable(props: ProofreadingTableProps): JSX.Element {
         render_cell: (payload) => {
           const row = payload.row;
           return (
-            <ProofreadingStatusCell
-              status={row.kind === "item" ? row.item.status : row.page.status}
-              warnings={row.kind === "item" ? row.item.warnings : []}
-              retranslating={row.kind === "item" && retranslating_row_id_set.has(row.row_id)}
-            />
+            <div className="proofreading-page__status-actions">
+              <ProofreadingStatusCell
+                status={row.kind === "item" ? row.item.status : row.page.status}
+                warnings={row.kind === "item" ? row.item.warnings : []}
+                retranslating={row.kind === "item" && retranslating_row_id_set.has(row.row_id)}
+              />
+              {is_narrow && payload.presentation === "body" ? (
+                <AppButton
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label={t(
+                    row.kind === "page" ? "proofreading_page.pages.view" : "app.action.edit",
+                  )}
+                  data-app-table-ignore-row-click="true"
+                  data-app-table-ignore-box-select="true"
+                  onClick={() => props.on_open_edit(payload.row_id)}
+                >
+                  <PencilLine />
+                </AppButton>
+              ) : null}
+            </div>
           );
         },
       },
     ];
-  }, [retranslating_row_id_set, t]);
+  }, [is_narrow, props.on_open_edit, retranslating_row_id_set, t]);
 
   return (
     <Card variant="table" className="proofreading-page__table-card">

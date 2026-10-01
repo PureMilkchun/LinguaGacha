@@ -59,3 +59,15 @@
 .page-stack--dense {
   gap: var(--ui-section-gap-dense);
 }
+
+@media (max-width: 900px) {
+  .app-shell {
+    height: var(--lg-visual-height, 100dvh);
+  }
+
+  .page-shell,
+  .workspace-scroll {
+    min-height: 0;
+    overscroll-behavior-y: contain;
+  }
+}

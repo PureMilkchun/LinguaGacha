@@ -4,6 +4,7 @@ export const de_de_agent_page = {
     view: "Ansehen",
     save_as: "Speichern unter",
     read_failed: "Dokument konnte nicht gelesen werden",
+    back_to_conversation: "Zurück zum Chat",
   },
   batch_translation_model: {
     follow: "Wie AGENT",
@@ -108,6 +109,7 @@ export const de_de_agent_page = {
     error: "Kontextkomprimierung fehlgeschlagen …",
   },
   action: {
+    tools: "Weitere Werkzeuge",
     send: "Senden",
     stop: "Stoppen",
     applying: "Projektänderungen werden angewendet; der Vorgang kann nicht gestoppt werden",

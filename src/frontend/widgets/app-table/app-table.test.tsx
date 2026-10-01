@@ -5,6 +5,7 @@ import type { DragEndEvent, DragStartEvent, DragOverEvent, DragDropManager } fro
 
 const app_table_test_state = vi.hoisted(() => {
   return {
+    narrow: false,
     virtual_item_indices: null as number[] | null,
     measure: vi.fn(),
     scrollToIndex: vi.fn(),
@@ -13,6 +14,10 @@ const app_table_test_state = vi.hoisted(() => {
     on_drag_end: null as ((event: DragEndEvent) => void) | null,
   };
 });
+
+vi.mock("@frontend/widgets/interactions/use-is-narrow-viewport", () => ({
+  use_is_narrow_viewport: () => app_table_test_state.narrow,
+}));
 
 vi.mock("@dnd-kit/react", async (import_original) => {
   const actual = await import_original<typeof import("@dnd-kit/react")>();
@@ -357,6 +362,7 @@ describe("AppTable", () => {
 
   beforeEach(() => {
     vi.stubGlobal("ResizeObserver", TestResizeObserver);
+    app_table_test_state.narrow = false;
     app_table_test_state.virtual_item_indices = null;
     app_table_test_state.measure.mockClear();
     app_table_test_state.scrollToIndex.mockClear();
@@ -384,6 +390,27 @@ describe("AppTable", () => {
     mounted_containers.push(rendered.container);
     return rendered.container;
   }
+
+  it("窄屏行高同步到虚拟定位，切回桌面恢复默认行高", async () => {
+    app_table_test_state.narrow = true;
+    const rendered = await render_app_table(create_default_props({ rows: create_rows(20) }));
+    mounted_roots.push(rendered.root);
+    mounted_containers.push(rendered.container);
+    expect(
+      rendered.container
+        .querySelector<HTMLElement>(".app-table")
+        ?.style.getPropertyValue("--app-table-row-height"),
+    ).toBe("48px");
+    app_table_test_state.narrow = false;
+    await act(async () => {
+      rendered.root.render(create_default_props({ rows: create_rows(20) }));
+    });
+    expect(
+      rendered.container
+        .querySelector<HTMLElement>(".app-table")
+        ?.style.getPropertyValue("--app-table-row-height"),
+    ).toBe("36px");
+  });
 
   it("排序按钮提示下一次动作，按升序、降序、清除循环", async () => {
     const changed = vi.fn();

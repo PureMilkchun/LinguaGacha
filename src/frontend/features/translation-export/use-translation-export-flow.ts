@@ -4,7 +4,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { format_agent_reference } from "@shared/agent-reference";
 import type { ProofreadingWarningSummary } from "@shared/proofreading/proofreading-types";
-import { api_fetch } from "@frontend/app/desktop/desktop-api";
+import { useProjectSessionUiState } from "@frontend/app/session/project-session-ui-state-context";
+import { api_fetch, is_browser_host } from "@frontend/app/desktop/desktop-api";
 import { push_toast } from "@frontend/app/feedback/desktop-toast";
 import { useI18n } from "@frontend/app/locale/locale-context";
 import { useAppNavigation } from "@frontend/app/navigation/navigation-context";
@@ -49,8 +50,9 @@ export type TranslationExportFlow = {
 export function useTranslationExportFlow(): TranslationExportFlow {
   const { t } = useI18n();
 
-  const { navigate_to_agent, selected_route } = useAppNavigation();
+  const { navigate_to_agent, navigate_to_route, selected_route } = useAppNavigation();
   const { project_snapshot } = useDesktopState();
+  const { set_page_ui_state } = useProjectSessionUiState();
   const [state, set_state] = useState<TranslationExportState>({ phase: "closed" });
   const state_ref = useRef(state); // 稳定动作读取即时 phase，阻止同一帧重复提交
   const project_ref = useRef(project_snapshot); // 异步查询完成时核对当前项目身份
@@ -126,9 +128,17 @@ export function useTranslationExportFlow(): TranslationExportFlow {
     const generation = request_generation_ref.current;
     apply_state({ phase: "exporting", previous: current_state });
     try {
-      await api_fetch<TranslationFileExportResult>("/api/translation/files/export", {});
+      const result = await api_fetch<TranslationFileExportResult>(
+        "/api/translation/files/export",
+        {},
+      );
       if (generation !== request_generation_ref.current) return;
       apply_state({ phase: "closed" });
+      // 服务端无法打开客户端文件夹；导出回执指向文件页的真实下载入口。
+      if (is_browser_host()) {
+        set_page_ui_state("file-browser", { path: result.output_path });
+        navigate_to_route("files");
+      }
     } catch (error) {
       if (generation !== request_generation_ref.current) return;
       push_toast(
@@ -137,7 +147,7 @@ export function useTranslationExportFlow(): TranslationExportFlow {
       );
       apply_state(current_state);
     }
-  }, [apply_state, t]);
+  }, [apply_state, t, set_page_ui_state, navigate_to_route]);
 
   /** 进入 Agent 时保留用户草稿，只有空草稿才补入审校建议。 */
   const jump_to_agent = useCallback((): void => {

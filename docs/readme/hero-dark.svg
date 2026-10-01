@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="480" viewBox="0 0 1280 480" role="img" aria-labelledby="title desc">
+<title id="title">LinguaGacha NAS — 部署到 NAS，用手机翻译小说</title><desc id="desc">基于官方0.125.0，把术语表、Agent与小说翻译部署到NAS，在局域网中通过手机上传原稿、翻译和下载译文。</desc>
+<rect width="1280" height="480" rx="24" fill="#101419"/><path d="M48 48H1232" stroke="#35404d"/>
+<g font-family="system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif">
+<text x="56" y="94" font-size="15" letter-spacing="3" fill="#f3a05c">SELF-HOSTED · BROWSER · MOBILE</text>
+<text x="52" y="178" font-size="70" font-weight="750" letter-spacing="-3" fill="#edf0f3">LinguaGacha<tspan fill="#f3a05c"> NAS</tspan></text>
+<text x="56" y="246" font-size="33" font-weight="650" fill="#edf0f3">小说翻译，手机就能完成。</text>
+<text x="56" y="293" font-size="22" fill="#a1aab7">部署到 NAS，在局域网里完成整套流程。</text>
+<rect x="56" y="354" width="193" height="38" rx="19" fill="#1b2129" stroke="#35404d"/><text x="152" y="379" text-anchor="middle" font-size="15" fill="#edf0f3">术语 · Agent · 翻译</text>
+<rect x="261" y="354" width="162" height="38" rx="19" fill="#1b2129" stroke="#35404d"/><text x="342" y="379" text-anchor="middle" font-size="15" fill="#edf0f3">手机界面优化</text>
+<rect x="435" y="354" width="124" height="38" rx="19" fill="#1b2129" stroke="#35404d"/><text x="497" y="379" text-anchor="middle" font-size="15" fill="#edf0f3">上传与下载</text>
+<path d="M833 232H876V168H926M876 232V321H944" fill="none" stroke="#f3a05c" stroke-width="3"/>
+<rect x="708" y="142" width="126" height="183" rx="20" fill="#1b2129" stroke="#35404d" stroke-width="2"/>
+<rect x="730" y="170" width="82" height="35" rx="8" fill="#101419" stroke="#35404d"/><rect x="730" y="221" width="82" height="35" rx="8" fill="#101419" stroke="#35404d"/>
+<circle cx="745" cy="187" r="4" fill="#f3a05c"/><circle cx="745" cy="238" r="4" fill="#f3a05c"/><text x="771" y="295" text-anchor="middle" font-size="16" font-weight="600" fill="#edf0f3">NAS</text>
+<rect x="928" y="102" width="265" height="153" rx="15" fill="#1b2129" stroke="#35404d" stroke-width="2"/><path d="M928 137H1193" stroke="#35404d"/><circle cx="947" cy="120" r="4" fill="#f3a05c"/><circle cx="962" cy="120" r="4" fill="#35404d"/><circle cx="977" cy="120" r="4" fill="#35404d"/>
+<rect x="946" y="156" width="44" height="77" rx="6" fill="#101419"/><path d="M1008 167H1151M1008 188H1124M1008 209H1140" stroke="#35404d" stroke-width="7" stroke-linecap="round"/><text x="1060" y="288" text-anchor="middle" font-size="16" fill="#a1aab7">电脑浏览器</text>
+<rect x="958" y="301" width="84" height="133" rx="16" fill="#1b2129" stroke="#35404d" stroke-width="2"/><rect x="983" y="310" width="33" height="5" rx="2.5" fill="#35404d"/><rect x="970" y="330" width="60" height="30" rx="5" fill="#101419"/><path d="M976 375H1023M976 389H1017M976 403H1023" stroke="#35404d" stroke-width="5" stroke-linecap="round"/><text x="1062" y="380" font-size="16" fill="#a1aab7">手机浏览器</text>
+<text x="56" y="444" font-size="13" letter-spacing="1" fill="#a1aab7">BASED ON neavo / LinguaGacha · COMMUNITY MAINTENANCE</text>
+</g></svg>

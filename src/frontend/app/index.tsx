@@ -1,3 +1,5 @@
+import { use_is_narrow_viewport } from "@frontend/widgets/interactions/use-is-narrow-viewport";
+import { ServerPathPickerHost } from "@frontend/features/server-path-picker/server-path-picker";
 import { TranslationExportProvider } from "@frontend/app/session/translation-export/translation-export-provider";
 import { PageLeaveProvider } from "@frontend/app/navigation/page-leave-provider";
 import { usePageLeave } from "@frontend/app/navigation/page-leave-context";
@@ -105,6 +107,7 @@ type LogWindowSettingsPayload = {
 
 /** 编排主窗口导航、关闭与工作区挂载。 */
 function AppContent(): JSX.Element {
+  const is_narrow_viewport = use_is_narrow_viewport();
   const { prepare_page_leave } = usePageLeave();
   const {
     initial_state_status,
@@ -172,6 +175,25 @@ function AppContent(): JSX.Element {
     return window.desktopApp.onWindowCloseRequest(() => {
       set_close_confirm_open(true);
     });
+  }, []);
+
+  // Web Bridge Shim: 监听应用内导航事件 (lg:navigate)。
+  // 浏览器模式下 openLogWindow 无法打开独立窗口, 改为派发此事件触发导航。
+  // Electron 环境下此事件不会被派发, 完全无副作用。
+  useEffect(() => {
+    function handle_navigate_event(event: Event): void {
+      const detail = (event as CustomEvent).detail;
+      if (detail?.route === "logs") {
+        // 日志页在桌面端是独立窗口 (?window=logs); 浏览器下改为新标签页打开该 URL。
+        const url = new URL(window.location.href);
+        url.searchParams.set("window", "logs");
+        window.open(url.toString(), "_blank", "noopener");
+      }
+    }
+    window.addEventListener("lg:navigate", handle_navigate_event as EventListener);
+    return () => {
+      window.removeEventListener("lg:navigate", handle_navigate_event as EventListener);
+    };
   }, []);
 
   useEffect(() => {
@@ -298,7 +320,7 @@ function AppContent(): JSX.Element {
 
   /** 切换导航分组，并在侧栏折叠时先展开侧栏。 */
   function handle_toggle_group(route_id: RouteId): void {
-    if (is_sidebar_collapsed) {
+    if (is_sidebar_collapsed && !is_narrow_viewport) {
       set_is_sidebar_collapsed(false);
       set_expanded_items((previous_items) => {
         const next_items = new Set(previous_items);
@@ -724,6 +746,7 @@ function MainWindowApp(): JSX.Element {
         <WindowVisualProviders>
           <PageLeaveProvider>
             <AppContent />
+            <ServerPathPickerHost />
           </PageLeaveProvider>
           <DesktopProgressToast />
         </WindowVisualProviders>

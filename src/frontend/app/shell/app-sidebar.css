@@ -233,3 +233,73 @@
     transition: none;
   }
 }
+
+/* 手机抽屉由 SidebarProvider 管理，样式随前端构建发布，不依赖注入脚本。 */
+@media (max-width: 900px) {
+  [data-slot="sidebar-gap"] {
+    width: 0 !important;
+  }
+
+  [data-slot="sidebar"] {
+    /* 抽屉宽度跟随屏幕，但不超过 300px，横屏时也不会占满 */
+    --sidebar-width: min(300px, 84vw) !important;
+    /*
+     * ⚠️ 不要动 --sidebar-width-icon。
+     *
+     * 它不只表示折叠态的侧栏宽度，侧栏内部还用它算图标列宽：
+     *   --sidebar-icon-column: calc(var(--sidebar-width-icon) - 2 * var(--sidebar-inset))
+     * 把它设成 0 会让图标列变成负数，抽屉里的导航图标被裁掉一半（实测踩过）。
+     * 折叠态已经由下面的 transform 移出屏幕，无需改这个变量。
+     */
+  }
+
+  [data-slot="sidebar-container"] {
+    width: min(300px, 84vw) !important;
+    /* 用 transform 而不是改宽度：可动画，且不触发布局重排 */
+    transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+    box-shadow: 0 0 32px rgb(0 0 0 / 28%);
+    will-change: transform;
+  }
+
+  [data-slot="sidebar"][data-state="collapsed"] [data-slot="sidebar-container"] {
+    transform: translateX(-100%);
+    /* 移出屏幕后不应再拦截触摸 */
+    pointer-events: none;
+    box-shadow: none;
+  }
+
+  [data-slot="sidebar"][data-state="expanded"] [data-slot="sidebar-container"] {
+    transform: translateX(0);
+  }
+
+  /* 折叠态下侧栏内部文字不再参与布局，避免 0 宽度处的换行抖动 */
+  [data-slot="sidebar"][data-state="collapsed"] [data-slot="sidebar-inner"] {
+    visibility: hidden;
+  }
+
+  .shell-sidebar-scrim {
+    position: fixed;
+    inset: 44px 0 0;
+    z-index: 39;
+    border: 0;
+    padding: 0;
+    background: rgb(0 0 0 / 38%);
+  }
+  .shell-sidebar-scrim[hidden] {
+    display: none;
+  }
+  [data-slot="sidebar-container"] {
+    z-index: 40;
+    top: var(--titlebar-height);
+    height: calc(var(--lg-visual-height, 100dvh) - var(--titlebar-height));
+  }
+  .titlebar {
+    position: relative;
+    z-index: 41;
+  }
+}
+@media (min-width: 901px) {
+  .shell-sidebar-scrim {
+    display: none;
+  }
+}

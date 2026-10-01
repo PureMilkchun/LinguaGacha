@@ -1,5 +1,5 @@
 import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
-import { type JSX, startTransition } from "react";
+import { type JSX } from "react";
 
 import { useI18n } from "@frontend/app/locale/locale-context";
 import { useSidebar } from "@frontend/shadcn/sidebar-context";
@@ -27,9 +27,9 @@ export function AppTitlebar(props: AppTitlebarProps): JSX.Element {
       : "app.navigation_action.expand_sidebar",
   );
   const toggle_aria_shortcut = resolve_shortcut_platform() === "mac" ? "Meta+B" : "Control+B"; // ARIA 使用标准键名，键帽使用平台符号。
-  /** 点击与快捷键共用低优先级布局更新，避免阻塞正在处理的输入。 */
+  /** 点击与快捷键直接提交展开状态，避免抽屉切换被低优先级导航更新延迟。 */
   function handle_toggle_sidebar(): void {
-    startTransition(toggleSidebar);
+    toggleSidebar();
   }
   useActionShortcut({
     action: "toggle_sidebar",

@@ -135,16 +135,16 @@ describe("AppearanceProvider", () => {
     return container;
   }
 
-  it("以系统主题和 LGBase 作为未配置用户的明确偏好", async () => {
+  it("以系统主题和系统字体作为未配置用户的明确偏好", async () => {
     const snapshots: AppearanceSnapshot[] = [];
     const view = await render_provider(snapshots);
 
     expect(snapshots.at(-1)).toEqual({
-      font_preference: "lg-base",
+      font_preference: "system",
       resolved_theme: "light",
       theme_preference: "system",
     });
-    expect(document.documentElement.dataset.lgBaseFont).toBe("enabled");
+    expect(document.documentElement.dataset.lgBaseFont).toBe("disabled");
     expect(set_title_bar_theme).toHaveBeenLastCalledWith("light");
 
     await act(async () => {
@@ -207,4 +207,42 @@ describe("AppearanceProvider", () => {
       expect(document.documentElement.dataset.lgFontSize).toBe(expected);
     }
   });
+});
+
+it("旧用户启用内置字体的存储也迁移为系统字体", async () => {
+  window.localStorage.setItem("lg-base-font-mode", "enabled");
+  const snapshots: AppearanceSnapshot[] = [];
+  // 本文件的 describe 私有 helper 不跨测试共享，使用公开上下文观察。
+  const container = document.createElement("div");
+  document.body.append(container);
+  const root = createRoot(container);
+  function Observe() {
+    const value = useAppearance();
+    snapshots.push({
+      font_preference: value.font_preference,
+      resolved_theme: value.resolved_theme,
+      theme_preference: value.theme_preference,
+    });
+    return null;
+  }
+  try {
+    await act(async () =>
+      root.render(
+        <AppearanceProvider>
+          <Observe />
+        </AppearanceProvider>,
+      ),
+    );
+    expect(snapshots.at(-1)?.font_preference).toBe("system");
+    expect(localStorage.getItem("lg-base-font-mode")).toBe("disabled");
+    await act(async () =>
+      window.dispatchEvent(
+        new StorageEvent("storage", { key: "lg-base-font-mode", newValue: "enabled" }),
+      ),
+    );
+    expect(snapshots.at(-1)?.font_preference).toBe("system");
+  } finally {
+    await act(async () => root.unmount());
+    container.remove();
+  }
 });

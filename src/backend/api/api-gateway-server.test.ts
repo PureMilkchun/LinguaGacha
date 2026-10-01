@@ -2,6 +2,7 @@ import { AgentUploadStore } from "../agent/workspace/uploads";
 import { NativeFs } from "../../native/native-fs";
 import type { AgentFileAttachment } from "../../shared/agent";
 import fs from "node:fs";
+import { Readable } from "node:stream";
 import http from "node:http";
 import os from "node:os";
 import path from "node:path";
@@ -102,6 +103,22 @@ describe("ApiGatewayServer", () => {
     expect(new Uint8Array(await image.arrayBuffer())).toEqual(
       Uint8Array.from([0, 255, 1, 128, 13, 10]),
     );
+  });
+
+  it("成果下载通过 HTTP 保持字节、中文文件名和当前会话边界", async () => {
+    const { baseUrl } = await create_gateway().start();
+    const route = `${baseUrl}/api/agent/workspace/download?path=work%2Freport.json&sessionId=session`;
+    const response = await fetch(route);
+    expect(response.status).toBe(200);
+    expect(response.headers.get("Content-Disposition")).toBe(
+      `attachment; filename*=UTF-8''${encodeURIComponent("报告 # %.json")}`,
+    );
+    expect(response.headers.get("Cache-Control")).toBe("no-store");
+    expect(new Uint8Array(await response.arrayBuffer())).toEqual(
+      Uint8Array.from([0, 255, 1, 128, 13, 10]),
+    );
+    const stale = await fetch(route.replace("sessionId=session", "sessionId=old"));
+    expect(stale.status).toBe(404);
   });
 
   it("二进制上传与下载通过真实 HTTP 原样往返，未知身份复用公开错误壳", async () => {
@@ -405,6 +422,14 @@ describe("ApiGatewayServer", () => {
         ...request,
         content: "# 报告\n检查通过",
       }),
+      read_workspace_file: (_href: string, session: string) => {
+        if (session !== "session") throw new AppError("file.not_found");
+        return {
+          name: "报告 # %.json",
+          size: 6,
+          stream: Readable.from([Uint8Array.from([0, 255, 1, 128, 13, 10])]),
+        };
+      },
       read_workspace_image: async () => ({
         mime: "image/png",
         bytes: Uint8Array.from([0, 255, 1, 128, 13, 10]),

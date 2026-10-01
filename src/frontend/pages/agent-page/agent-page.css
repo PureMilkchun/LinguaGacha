@@ -281,7 +281,7 @@
   min-width: 0;
   align-items: center;
   gap: 4px;
-  margin-top: 8px;
+  margin-top: 4px;
 }
 
 .agent-message-frame--user .agent-message-actions {
@@ -673,7 +673,7 @@
 
 .agent-tool-detail__header {
   display: flex;
-  min-height: 64px;
+  min-height: 38px;
   flex: 0 0 auto;
   align-items: center;
   justify-content: space-between;
@@ -813,12 +813,12 @@
   flex-direction: column;
   container-type: inline-size;
   gap: 8px;
-  min-height: var(--agent-status-row-height);
+  min-height: 0;
 }
 
 .agent-page__operation-zone {
   container-type: inline-size;
-  margin-top: 8px;
+  margin-top: 4px;
 }
 
 .agent-page__decision-slot {
@@ -994,7 +994,7 @@
 }
 
 .agent-composer {
-  min-height: 106px;
+  min-height: 0;
   padding: 6px var(--agent-composer-padding-inline-end, 6px) 5px 12px;
 }
 
@@ -1169,7 +1169,7 @@
 }
 
 .agent-composer__input .cm-editor {
-  min-height: 64px;
+  min-height: 38px;
   max-height: 140px;
   background: transparent;
   font-family: inherit;
@@ -1184,7 +1184,7 @@
 }
 
 .agent-composer__input .cm-content {
-  min-height: 64px;
+  min-height: 38px;
   padding: 6px 2px 3px;
   caret-color: var(--primary);
   user-select: text;
@@ -1331,7 +1331,7 @@
 }
 
 .agent-decision__body {
-  margin-top: 8px;
+  margin-top: 4px;
 }
 
 .agent-decision__options {
@@ -1758,4 +1758,173 @@
   gap: 4px;
   color: var(--ui-warning);
   font-size: var(--ui-font-size-12);
+}
+
+@media (max-width: 900px) {
+  .agent-page {
+    --agent-stream-width-offset: 0px;
+  }
+  .agent-page__messages {
+    width: calc(100% - 24px);
+    padding-top: 16px;
+  }
+  .agent-page__input-area,
+  .agent-page__bottom-region[data-decision="true"] .agent-page__input-area {
+    width: calc(100% - 24px);
+  }
+  .agent-page__bottom-region {
+    padding-top: 8px;
+  }
+  .agent-page__empty {
+    padding: 16px 20px;
+    gap: 16px;
+  }
+  .agent-page__suggestion {
+    min-height: 44px;
+  }
+  .agent-page__suggestion-label {
+    font-size: var(--ui-font-size-14);
+  }
+  .agent-composer__input .cm-editor {
+    font-size: var(--ui-font-size-16);
+  }
+  .agent-composer__input .cm-editor,
+  .agent-composer__input .cm-scroller {
+    max-height: min(140px, calc(var(--lg-visual-height, 100dvh) * 0.24));
+  }
+  .agent-composer__footer {
+    align-items: flex-end;
+    gap: 4px;
+  }
+  .agent-composer__footer-end {
+    flex: 0 0 auto;
+  }
+  .agent-page__status-zone {
+    --agent-status-row-height: 44px;
+    --agent-status-side-rail: 44px;
+  }
+  .agent-attachment {
+    height: 44px;
+    width: min(100%, 240px);
+  }
+  .agent-attachment__body {
+    padding-right: 44px;
+  }
+  .agent-attachment__remove {
+    top: 0;
+    right: 0;
+    width: 44px;
+    height: 42px;
+    opacity: 1;
+    pointer-events: auto;
+    box-shadow: none;
+  }
+}
+@media (max-width: 900px) and (max-height: 520px) {
+  .agent-page__empty {
+    justify-content: flex-start;
+    padding: 12px;
+  }
+  .agent-page__empty-icon {
+    display: none;
+  }
+  .agent-page__empty-intro {
+    gap: 4px;
+  }
+}
+
+/* 跟随按钮属于信息流浮层，空闲时不再为它预留整行。 */
+.agent-page__stream-region {
+  position: relative;
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+.agent-page__follow-floating {
+  position: absolute;
+  inset-inline-end: 20px;
+  bottom: 12px;
+  z-index: 2;
+}
+.agent-page__follow-floating .agent-page__follow-control {
+  position: static;
+  width: 36px;
+  height: 36px;
+  background: var(--popover);
+  box-shadow: var(--ui-shadow-overlay);
+}
+.agent-page__messages {
+  padding-bottom: 60px;
+}
+.agent-composer__tools {
+  position: relative;
+  min-width: 0;
+}
+.agent-composer__tools-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 8px;
+  border-radius: var(--ui-radius-button);
+  cursor: pointer;
+  list-style: none;
+  color: var(--foreground);
+}
+.agent-composer__tools-toggle::-webkit-details-marker {
+  display: none;
+}
+.agent-composer__tools-toggle svg {
+  width: 16px;
+  height: 16px;
+}
+.agent-composer__tools[open] > summary {
+  background: var(--accent);
+}
+.agent-composer__tools[open] > summary svg {
+  transform: rotate(180deg);
+}
+.agent-composer__tools-panel {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 0;
+  z-index: 5;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  width: min(320px, calc(100vw - 96px));
+  max-height: min(400px, 50dvh);
+  overflow-y: auto;
+  gap: 4px;
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--ui-radius-card);
+  background: var(--popover);
+  box-shadow: var(--ui-shadow-overlay);
+}
+.agent-composer__tools:not([open]) > .agent-composer__tools-panel {
+  display: none;
+}
+.agent-composer__tools-panel button {
+  justify-content: flex-start;
+  width: 100%;
+  min-height: 36px;
+}
+.agent-composer__tools-panel .agent-composer__connection-status {
+  max-width: 100%;
+}
+@media (max-width: 900px) {
+  .agent-page__bottom-region {
+    padding-top: 4px;
+  }
+  .agent-composer__tools-toggle,
+  .agent-composer__tools-panel button {
+    min-height: 44px;
+  }
+  .agent-page__follow-floating .agent-page__follow-control {
+    width: 44px;
+    height: 44px;
+  }
+  .agent-composer__footer {
+    align-items: center;
+  }
 }

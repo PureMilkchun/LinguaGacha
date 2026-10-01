@@ -9,6 +9,10 @@ import type {
   ProofreadingVisibleItem,
 } from "@shared/proofreading/proofreading-types";
 import { TooltipProvider } from "@frontend/shadcn/tooltip";
+const viewport = vi.hoisted(() => ({ narrow: false }));
+vi.mock("@frontend/widgets/interactions/use-is-narrow-viewport", () => ({
+  use_is_narrow_viewport: () => viewport.narrow,
+}));
 vi.mock("@frontend/app/locale/locale-context", () => {
   return {
     useI18n: () => {
@@ -68,6 +72,7 @@ describe("ProofreadingTable", () => {
   let root: Root | null = null;
 
   afterEach(async () => {
+    viewport.narrow = false;
     if (root !== null) {
       await act(async () => {
         root?.unmount();
@@ -128,6 +133,19 @@ describe("ProofreadingTable", () => {
     });
   }
 
+  it("窄屏有可直接点击的编辑入口，无需双击或右键", async () => {
+    viewport.narrow = true;
+    const on_open_edit = vi.fn();
+    await render_table(create_visible_item({}), on_open_edit);
+    const edit = container?.querySelector<HTMLButtonElement>(
+      'button[aria-label="app.action.edit"]',
+    );
+    expect(edit).not.toBeNull();
+    await act(async () => {
+      edit?.click();
+    });
+    expect(on_open_edit).toHaveBeenCalledExactlyOnceWith("1");
+  });
   it.each(["text", "page", "mixed", "readonly"])(
     "%s 选区只显示适用操作，文本写操作保留完整目标集合",
     async (kind) => {

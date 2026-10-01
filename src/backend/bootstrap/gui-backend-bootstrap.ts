@@ -31,6 +31,11 @@ export interface GuiBackendBootstrapOptions {
   openDirectory: (path: string) => Promise<void>; // Electron main 副作用端口
   pickSavePath: (defaultName: string) => Promise<string | null>; // 原生保存选择，取消返回 null
   workerExecution: BackendWorkerExecution; // 正式 worker_threads 与测试执行策略
+  staticRoot?: string; // 服务器部署托管渲染器产物；桌面部署不传
+  mobileLayerRoot?: string; // 移动端适配层目录；桌面部署不传
+  apiPort?: number; // 服务器部署固定 Gateway 端口；省略时随机分配
+  apiHost?: string; // 服务器部署监听地址；省略时只绑回环
+  accessToken?: string; // 可选访问令牌，透传给 Gateway
 }
 
 export interface GuiBackendBootstrapStartResult {
@@ -176,6 +181,15 @@ export class GuiBackendBootstrap {
           services.state.runtimeGate,
         ),
         eventStream: event_stream,
+        ...(this.options.staticRoot === undefined ? {} : { staticRoot: this.options.staticRoot }),
+        ...(this.options.mobileLayerRoot === undefined
+          ? {}
+          : { mobileLayerRoot: this.options.mobileLayerRoot }),
+        ...(this.options.apiPort === undefined ? {} : { port: this.options.apiPort }),
+        ...(this.options.apiHost === undefined ? {} : { host: this.options.apiHost }),
+        ...(this.options.accessToken === undefined
+          ? {}
+          : { accessToken: this.options.accessToken }),
       });
       this.gateway = gateway;
       const gateway_result = await gateway.start();

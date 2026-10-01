@@ -259,6 +259,40 @@ describe("desktop-api", () => {
     );
   });
 
+  it.each(["0.0.0", "0.125.0"])(
+    "NAS 浏览器版本 %s 跳过官方更新请求，业务 API 仍可使用",
+    async (current_version) => {
+      const descriptor = Object.getOwnPropertyDescriptor(window, "desktopApp");
+      Object.defineProperty(window, "desktopApp", {
+        configurable: true,
+        value: create_desktop_bridge_api_mock({
+          backendApi: { baseUrl: "http://nas.test:8787", browser: true },
+        }),
+      });
+      const fetch_mock = vi.fn(async (url: string) =>
+        Response.json(
+          url.startsWith("http://nas.test:8787/")
+            ? { ok: true, data: { state: "idle" } }
+            : { tag_name: "v9.9.9", html_url: "https://example.com/release" },
+        ),
+      );
+      vi.stubGlobal("fetch", fetch_mock);
+      try {
+        const { check_github_release_update, api_get } = await import("./desktop-api");
+        await expect(check_github_release_update(current_version)).resolves.toBeNull();
+        expect(fetch_mock).not.toHaveBeenCalled();
+        await expect(api_get("/api/agent/snapshot")).resolves.toEqual({ state: "idle" });
+        expect(fetch_mock).toHaveBeenCalledExactlyOnceWith(
+          "http://nas.test:8787/api/agent/snapshot",
+          { method: "GET" },
+        );
+      } finally {
+        if (descriptor) Object.defineProperty(window, "desktopApp", descriptor);
+        else Reflect.deleteProperty(window, "desktopApp");
+      }
+    },
+  );
+
   it("check_github_release_update 解析新版 release 的 Windows x64 与 arm64 zip", async () => {
     const fetch_mock = vi.fn(async () => {
       return {

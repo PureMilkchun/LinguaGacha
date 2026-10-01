@@ -1,5 +1,6 @@
 // 同时驱动虚拟定位和 CSS 行高，避免滚动估算与占位行分裂。
 export const APP_TABLE_DEFAULT_ROW_HEIGHT = 36;
+export const APP_TABLE_MOBILE_ROW_HEIGHT = 48;
 // 控制表格预渲染缓冲，减少快速滚动时的空白闪烁。
 export const APP_TABLE_DEFAULT_VIRTUAL_OVERSCAN = 8;
 

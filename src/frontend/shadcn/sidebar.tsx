@@ -1,4 +1,5 @@
 import * as React from "react";
+import { use_is_narrow_viewport } from "@frontend/widgets/interactions/use-is-narrow-viewport";
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import { cn } from "@frontend/shadcn/classnames";
@@ -30,17 +31,22 @@ function SidebarProvider({
   onOpenChange?: (open: boolean) => void;
 }) {
   const [_open, _setOpen] = React.useState(defaultOpen); // 侧边栏内部状态；外部控制时使用 openProp 和 setOpenProp
-  const open = openProp ?? _open;
+  const is_narrow = use_is_narrow_viewport();
+  const [mobile_open, set_mobile_open] = React.useState(false);
+  React.useLayoutEffect(() => set_mobile_open(false), [is_narrow]);
+  const open = is_narrow ? mobile_open : (openProp ?? _open);
   const setOpen = React.useCallback(
     (value: boolean | ((value: boolean) => boolean)) => {
       const openState = typeof value === "function" ? value(open) : value;
-      if (setOpenProp) {
+      if (is_narrow) {
+        set_mobile_open(value);
+      } else if (setOpenProp) {
         setOpenProp(openState);
       } else {
         _setOpen(openState);
       }
     },
-    [setOpenProp, open],
+    [setOpenProp, open, is_narrow],
   );
 
   // 所有交互经同一入口提交，受控模式由宿主确认新状态。
@@ -83,6 +89,7 @@ function SidebarProvider({
 /** 固定在左侧的导航与工作区占位同步收缩，折叠后保留图标入口。 */
 function Sidebar({ className, children, ...props }: React.ComponentProps<"div">) {
   const { state } = useSidebar();
+  const is_narrow = use_is_narrow_viewport();
 
   return (
     <div
@@ -90,6 +97,7 @@ function Sidebar({ className, children, ...props }: React.ComponentProps<"div">)
       data-state={state}
       data-collapsible={state === "collapsed" ? "icon" : ""}
       data-slot="sidebar"
+      inert={is_narrow && state === "collapsed" ? true : undefined}
     >
       {/* 桌面端侧边栏占位间距由这里处理 */}
       <div

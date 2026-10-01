@@ -212,6 +212,9 @@ function normalize_github_release_update(
 export async function check_github_release_update(
   current_version: string,
 ): Promise<GithubReleaseUpdate | null> {
+  // NAS 浏览器版通过部署镜像更新；官方桌面 Release 不适用，也不应触发更新弹窗。
+  if (is_browser_host()) return null;
+
   try {
     const response = await fetch(GITHUB_LATEST_RELEASE_URL, {
       method: "GET",
@@ -261,6 +264,11 @@ export async function api_upload<data_type>(
 }
 
 /** 文件下载链接只消费宿主注入的后端地址。 */
+/** 浏览器下载使用同源响应，桌面宿主仍沿用原生保存入口。 */
+export function is_browser_host(): boolean {
+  return window.desktopApp.backendApi.browser === true;
+}
+
 export function api_file_url(path: string): string {
   return build_api_url(read_backend_api_base_url(), path);
 }

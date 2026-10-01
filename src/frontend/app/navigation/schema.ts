@@ -6,6 +6,7 @@ import {
   BookOpenCheck,
   Boxes,
   FlaskConical,
+  FolderOpen,
   GraduationCap,
   Grid2x2Check,
   ListTree,
@@ -33,6 +34,11 @@ export const NAVIGATION_GROUPS: NavigationGroup[] = [
   {
     id: "task",
     items: [
+      {
+        id: "files",
+        icon: FolderOpen,
+        title_key: "file_page.title",
+      },
       {
         id: "agent",
         icon: Bot,

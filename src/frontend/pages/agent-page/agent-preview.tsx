@@ -116,7 +116,11 @@ export function AgentPreviewPage({
       }}
     >
       <div className="agent-document__body">
-        <AgentMarkdown text={content.value} streaming={false} document_path={document.path} />
+        {document.preview === "text" ? (
+          <pre className="agent-document__text">{content.value}</pre>
+        ) : (
+          <AgentMarkdown text={content.value} streaming={false} document_path={document.path} />
+        )}
       </div>
     </div>
   );

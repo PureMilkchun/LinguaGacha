@@ -1,3 +1,4 @@
+import { use_is_narrow_viewport } from "@frontend/widgets/interactions/use-is-narrow-viewport";
 import { TranslationProgressBadge } from "@frontend/features/translation-progress/translation-progress-badge";
 import { CircleEllipsis } from "lucide-react";
 import { type JSX, useMemo, useState } from "react";
@@ -74,6 +75,7 @@ function sort_workbench_entries(
 /** 页面内排序只改变展示；手动重排通过回调保存工程顺序。 */
 export function WorkbenchFileTable(props: WorkbenchFileTableProps): JSX.Element {
   const { t } = useI18n();
+  const is_narrow = use_is_narrow_viewport();
   const [sort_state, set_sort_state] = useState<AppTableSortState | null>(null);
   const sorted_entries = useMemo(() => {
     return sort_workbench_entries(props.entries, sort_state);
@@ -128,7 +130,7 @@ export function WorkbenchFileTable(props: WorkbenchFileTableProps): JSX.Element 
         kind: "data",
         id: "progress",
         title: t("workbench_page.table.progress"),
-        width: 120,
+        width: is_narrow ? 96 : 120,
         align: "center",
         sortable: {},
         head_class_name: "workbench-page__table-progress-head",
@@ -148,7 +150,7 @@ export function WorkbenchFileTable(props: WorkbenchFileTableProps): JSX.Element 
         kind: "data",
         id: "action",
         title: t("workbench_page.table.actions"),
-        width: 108,
+        width: is_narrow ? 56 : 108,
         align: "center",
         head_class_name: "workbench-page__table-action-head",
         cell_class_name: "workbench-page__table-action-cell",
@@ -181,7 +183,7 @@ export function WorkbenchFileTable(props: WorkbenchFileTableProps): JSX.Element 
         },
       },
     ];
-  }, [props.on_prepare_entry_action, props.on_reset, props.readonly, t]);
+  }, [is_narrow, props.on_prepare_entry_action, props.on_reset, props.readonly, t]);
 
   return (
     <Card variant="table" className="workbench-page__table-card">

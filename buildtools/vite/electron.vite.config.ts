@@ -15,6 +15,9 @@ export default defineConfig({
         external: ["mupdf"], // MuPDF 只在共享运行目录的 PDF worker / 工作区进程中加载
         input: {
           index: project_path("src/index.ts"),
+          // 纯 Node 服务器入口：桌面入口按 --cli 分发，服务器入口独立成文件，
+          // 因此它的依赖图不会拉入 src/gui。
+          "server-entry": project_path("src/server/server-entry.ts"),
           "backend-runtime-worker-entry": project_path(
             "src/backend/bootstrap/backend-runtime-worker-entry.ts",
           ),

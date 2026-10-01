@@ -9,6 +9,11 @@ import { SidebarProvider } from "@frontend/shadcn/sidebar";
 import { TooltipProvider } from "@frontend/shadcn/tooltip";
 import { AppSidebar } from "./app-sidebar";
 
+const viewport = vi.hoisted(() => ({ narrow: false }));
+vi.mock("@frontend/widgets/interactions/use-is-narrow-viewport", () => ({
+  use_is_narrow_viewport: () => viewport.narrow,
+}));
+
 vi.mock("./app-appearance-menu", () => ({ AppAppearanceMenu: () => null }));
 
 type RenderSidebarOptions = Partial<ComponentProps<typeof AppSidebar>>;
@@ -18,6 +23,7 @@ describe("AppSidebar", () => {
   let container: HTMLDivElement | null = null;
 
   afterEach(async () => {
+    viewport.narrow = false;
     if (root !== null) {
       await act(async () => {
         root?.unmount();
@@ -30,7 +36,11 @@ describe("AppSidebar", () => {
   });
 
   /** 复用同一挂载点，验证宿主更新侧栏与导航状态后的交互。 */
-  async function render_sidebar(options: RenderSidebarOptions = {}, open = true): Promise<void> {
+  async function render_sidebar(
+    options: RenderSidebarOptions = {},
+    open = true,
+    onOpenChange?: (open: boolean) => void,
+  ): Promise<void> {
     if (container === null) {
       container = document.createElement("div");
       document.body.append(container);
@@ -41,7 +51,7 @@ describe("AppSidebar", () => {
       root?.render(
         <LocaleProvider locale="zh-CN">
           <TooltipProvider>
-            <SidebarProvider open={open}>
+            <SidebarProvider open={open} {...(onOpenChange === undefined ? {} : { onOpenChange })}>
               <AppSidebar
                 groups={[]}
                 selected_route="project-home"
@@ -169,5 +179,34 @@ describe("AppSidebar", () => {
     await render_sidebar(options, false);
     expect([enabled_child.tabIndex, disabled_child.tabIndex]).toEqual([-1, -1]);
     expect(enabled_child.closest("[aria-hidden]")?.getAttribute("aria-hidden")).toBe("true");
+  });
+  it.each([true, false])("叶子页面只在窄屏选择后收起抽屉，narrow=%s", async (narrow) => {
+    viewport.narrow = narrow;
+    const onOpenChange = vi.fn();
+    const on_select_route = vi.fn();
+    await render_sidebar(
+      {
+        groups: [
+          {
+            id: "replacement",
+            items: [
+              { id: "basic-settings", title_key: "basic_settings_page.title", icon: ReplaceAll },
+            ],
+          },
+        ],
+        on_select_route,
+      },
+      true,
+      onOpenChange,
+    );
+    await act(async () => {
+      container?.querySelector<HTMLButtonElement>(".sidebar-row")?.click();
+    });
+    expect(on_select_route).toHaveBeenCalledWith("basic-settings");
+    expect(onOpenChange).not.toHaveBeenCalled();
+    if (narrow)
+      expect(container?.querySelector('[data-slot="sidebar"]')?.getAttribute("data-state")).toBe(
+        "collapsed",
+      );
   });
 });

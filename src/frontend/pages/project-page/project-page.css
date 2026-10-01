@@ -398,3 +398,53 @@
     width: 100%;
   }
 }
+
+/* 单列时卡片按内容展开，页脚不能参与剩余视口高度的压缩。 */
+@media (max-width: 1180px) {
+  .project-home__layout {
+    flex: 0 0 auto;
+    align-content: start;
+  }
+  .project-home__panel-content,
+  .project-home__panel-section {
+    flex: 0 0 auto;
+  }
+  .project-home__dropzone {
+    flex-shrink: 0;
+  }
+  .project-home__footer {
+    margin-top: 0;
+    flex-shrink: 0;
+  }
+}
+
+@media (max-width: 900px) {
+  .project-home__panel {
+    --card-padding-x: 16px;
+    --card-header-top: 16px;
+    --card-footer-bottom: 16px;
+  }
+  .project-home__dropzone {
+    height: 120px;
+    padding: 16px;
+  }
+  .project-home__selected-card {
+    min-height: 120px;
+  }
+  .project-home__recent-empty {
+    min-height: 100px;
+    gap: 8px;
+  }
+  .project-home__recent-remove {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .project-home__format-tags {
+    gap: 6px;
+  }
+  .project-home__format-tag {
+    height: auto;
+    min-height: 30px;
+    white-space: normal;
+  }
+}

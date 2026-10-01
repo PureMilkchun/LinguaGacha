@@ -1,4 +1,5 @@
 export const zh_cn_glossary_page = {
+  columns: "显示列",
   title: "术语表",
   toggle: {
     tooltip: "通过在提示词中构建术语表来引导模型翻译，可实现统一翻译、矫正人称属性等功能",

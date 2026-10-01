@@ -4,6 +4,7 @@ export const zh_cn_agent_page = {
     view: "查看",
     save_as: "另存为",
     read_failed: "无法读取文档",
+    back_to_conversation: "返回对话",
   },
   batch_translation_model: {
     follow: "保持一致",
@@ -108,6 +109,7 @@ export const zh_cn_agent_page = {
     error: "上下文压缩失败 …",
   },
   action: {
+    tools: "更多工具",
     send: "发送",
     stop: "停止",
     applying: "正在应用工程修改，完成前不可停止",

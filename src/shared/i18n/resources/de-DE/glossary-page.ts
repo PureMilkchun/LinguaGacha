@@ -2,6 +2,7 @@ import { zh_cn_glossary_page } from "../zh-CN/glossary-page";
 import type { LocaleMessageSchema } from "../../types";
 
 export const de_de_glossary_page = {
+  columns: "Spalten",
   title: "Glossar",
   toggle: {
     tooltip:

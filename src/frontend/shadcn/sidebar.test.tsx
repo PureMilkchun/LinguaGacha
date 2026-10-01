@@ -2,6 +2,11 @@ import { act } from "react";
 import { createRoot } from "react-dom/client";
 import { expect, it, vi } from "vitest";
 
+const viewport = vi.hoisted(() => ({ narrow: false }));
+vi.mock("@frontend/widgets/interactions/use-is-narrow-viewport", () => ({
+  use_is_narrow_viewport: () => viewport.narrow,
+}));
+
 import { SidebarProvider } from "./sidebar";
 import { useSidebar } from "./sidebar-context";
 
@@ -41,6 +46,44 @@ it("受控侧栏等待宿主确认状态，再按新状态发出切换请求", a
     await act(async () => button.click());
     expect(on_change.mock.calls).toEqual([[false], [true]]);
   } finally {
+    await act(async () => root.unmount());
+    container.remove();
+  }
+});
+
+it("手机抽屉不使用桌面图标折叠态，旋转后恢复桌面偏好", async () => {
+  viewport.narrow = true;
+  const container = document.createElement("div");
+  document.body.append(container);
+  const root = createRoot(container);
+  const on_change = vi.fn();
+  const render = async () =>
+    act(async () =>
+      root.render(
+        <SidebarProvider open={false} onOpenChange={on_change}>
+          <SidebarControl />
+        </SidebarProvider>,
+      ),
+    );
+  try {
+    await render();
+    const button = container.querySelector("button")!;
+    expect(button.getAttribute("aria-expanded")).toBe("false");
+    await act(async () => button.click());
+    expect(button.getAttribute("aria-expanded")).toBe("true");
+    expect(on_change).not.toHaveBeenCalled();
+    await act(async () => button.click());
+    expect(button.getAttribute("aria-expanded")).toBe("false");
+    viewport.narrow = false;
+    await render();
+    expect(button.getAttribute("aria-expanded")).toBe("false");
+    await act(async () => button.click());
+    expect(on_change).toHaveBeenCalledExactlyOnceWith(true);
+    viewport.narrow = true;
+    await render();
+    expect(button.getAttribute("aria-expanded")).toBe("false");
+  } finally {
+    viewport.narrow = false;
     await act(async () => root.unmount());
     container.remove();
   }

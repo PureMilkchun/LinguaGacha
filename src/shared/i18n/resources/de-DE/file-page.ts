@@ -1,0 +1,33 @@
+export const de_de_file_page = {
+  picker: {
+    search: "Diesen Ordner durchsuchen",
+    filename: "Dateiname",
+    selected: "{COUNT} Dateien ausgewählt",
+    current_directory: "Diesen Ordner wählen",
+  },
+  title: "Dateien",
+  tab: { files: "Dateien", trash: "Papierkorb" },
+  action: {
+    download: "Herunterladen",
+    up: "Übergeordneter Ordner",
+    new_folder: "Neuer Ordner",
+    upload: "Dateien hochladen",
+    create_project: "Projekt aus Auswahl erstellen",
+    rename: "Umbenennen",
+    delete: "In den Papierkorb",
+    restore: "Wiederherstellen",
+    purge: "Endgültig löschen",
+    purge_all: "Papierkorb leeren",
+  },
+  kind: { directory: "Ordner" },
+  state: { selected: "Ausgewählt" },
+  empty: { files: "Dieser Ordner ist leer", trash: "Der Papierkorb ist leer" },
+  upload: { done: "Fertig", failed: "Fehlgeschlagen" },
+  prompt: { project_name: "Projektname", new_folder: "Ordnername", rename: "Neuer Name" },
+  notice: {
+    project_created: "Projekt erstellt",
+    folder_created: "Ordner erstellt",
+    moved_to_trash: "In den Papierkorb verschoben",
+    renamed: "Umbenannt",
+  },
+};

@@ -47,3 +47,19 @@ __pycache__
 # extra
 !/tsconfig*.json
 !/package-lock.json
+
+# NAS 本地数据与凭据，禁止提交
+/data
+/logs
+/deployment-records
+/.learnings
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.sqlite
+*.sqlite3
+*.db

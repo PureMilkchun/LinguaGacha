@@ -5,8 +5,18 @@ import { AgentFileContext } from "./agent-file-context";
 import { AgentFileTrigger } from "./agent-file-trigger";
 import type { AgentFile } from "@shared/agent-workspace-file";
 
-const mocks = vi.hoisted(() => ({ api: vi.fn(), open: vi.fn(), toast: vi.fn() }));
-vi.mock("@frontend/app/desktop/desktop-api", () => ({ api_fetch: mocks.api }));
+const mocks = vi.hoisted(() => ({
+  api: vi.fn(),
+  open: vi.fn(),
+  toast: vi.fn(),
+  browser: false,
+  download: vi.fn(),
+}));
+vi.mock("@frontend/app/desktop/desktop-api", () => ({
+  api_fetch: mocks.api,
+  is_browser_host: () => mocks.browser,
+}));
+vi.mock("./agent-file-download", () => ({ download_agent_file: mocks.download }));
 vi.mock("@frontend/app/feedback/desktop-toast", () => ({ push_toast: mocks.toast }));
 vi.mock("@frontend/app/locale/locale-context", () => ({
   useI18n: () => ({ t: (key: string) => key }),
@@ -15,6 +25,8 @@ let root: Root;
 let container: HTMLDivElement;
 const file: AgentFile = { path: "work/report.md", name: "报告", kind: "file", preview: "markdown" };
 beforeEach(() => {
+  mocks.browser = false;
+  mocks.download.mockClear();
   mocks.api.mockReset();
   mocks.open.mockClear();
   mocks.toast.mockClear();
@@ -117,6 +129,28 @@ it("右键目录不执行打开，左键沿用目录操作", async () => {
   expect(document.querySelector('[role="menu"]')).toBeNull();
   expect(mocks.api.mock.calls.some(([route]) => route.endsWith("activate-path"))).toBe(false);
   await act(async () => trigger.click());
+  expect(mocks.api).toHaveBeenLastCalledWith("/api/agent/workspace/activate-path", {
+    path: file.path,
+  });
+});
+
+it("浏览器不能预览的成果直接下载，不调用桌面保存对话框", async () => {
+  mocks.browser = true;
+  mocks.api.mockResolvedValue({ ...file, preview: null });
+  const trigger = await render();
+  await act(async () => trigger.click());
+  expect(mocks.download).toHaveBeenCalledWith(file.path, "session");
+  expect(mocks.api.mock.calls.some(([route]) => route.endsWith("activate-path"))).toBe(false);
+});
+
+it("浏览器目录链接不作为文件下载", async () => {
+  mocks.browser = true;
+  mocks.api.mockImplementation(async (route) =>
+    route.endsWith("/file") ? { ...file, kind: "directory", preview: null } : { status: "opened" },
+  );
+  const trigger = await render();
+  await act(async () => trigger.click());
+  expect(mocks.download).not.toHaveBeenCalled();
   expect(mocks.api).toHaveBeenLastCalledWith("/api/agent/workspace/activate-path", {
     path: file.path,
   });

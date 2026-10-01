@@ -9,7 +9,7 @@ import { AGENT_IMAGE_INPUT_MAX_BYTES, type AgentImageService } from "../agent-im
 import type { AgentImage } from "../../../shared/agent-image";
 import path from "node:path";
 import { decode_text_content } from "../../../shared/utils/text-tool";
-import { is_agent_markdown_path } from "../../../shared/agent-workspace-file";
+import { is_agent_markdown_path, is_agent_text_path } from "../../../shared/agent-workspace-file";
 
 import { agent_workspace_page_fingerprint } from "../../project/agent-workspace-page-write";
 import type { PDFHost } from "../../../shared/pdf";
@@ -250,7 +250,9 @@ export class AgentWorkspaceService {
             ? "image"
             : is_agent_markdown_path(href)
               ? "markdown"
-              : null,
+              : is_agent_text_path(href)
+                ? "text"
+                : null,
     };
   }
 
@@ -320,11 +322,28 @@ export class AgentWorkspaceService {
 
   /** 文档只解码一次捕获的字节，跨会话交付由 AgentService 复核。 */
   public async read_document(href: unknown): Promise<{ path: string; content: string }> {
-    if (typeof href !== "string" || !is_agent_markdown_path(href)) {
+    if (typeof href !== "string" || (!is_agent_markdown_path(href) && !is_agent_text_path(href))) {
       throw new AppErrors.AppError("file.invalid_structure");
     }
     const file = this.read_preview_file(href, AGENT_DOCUMENT_MAX_BYTES);
     return { path: file.path, content: await decode_text_content(file.bytes) };
+  }
+
+  /** 完整成果按流下载，沿用工作区路径边界；大文件不进入预览的内存缓冲。 */
+  public open_file(href: unknown): { name: string; size: number; stream: Readable } {
+    if (this.busy) throw new AppErrors.AppError("runtime.busy");
+    const target = this.resolve_path(href);
+    if (target.kind !== "file") throw new AppErrors.AppError("file.invalid_structure");
+    try {
+      return {
+        name: this.describe_target(target).name,
+        size: this.native_fs.stat(target.path).size,
+        stream: this.native_fs.create_read_stream(target.path),
+      };
+    } catch (cause) {
+      if (AppErrors.is_app_error(cause)) throw cause;
+      throw new AppErrors.AppError("file.io_failed", { cause });
+    }
   }
 
   /** 允许的图片类型统一映射为响应 MIME，字节仍经有界读取。 */
@@ -978,6 +997,7 @@ export type AgentWorkspacePort = Pick<
   | "activate_path"
   | "read_document"
   | "read_document_image"
+  | "open_file"
   | "describe_file"
   | "invalidate_links"
 > & {

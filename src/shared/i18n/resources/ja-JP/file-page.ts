@@ -1,0 +1,33 @@
+export const ja_jp_file_page = {
+  picker: {
+    search: "このフォルダーを検索",
+    filename: "ファイル名",
+    selected: "{COUNT} 個のファイルを選択",
+    current_directory: "このフォルダーを選択",
+  },
+  title: "ファイル",
+  tab: { files: "ファイル", trash: "ゴミ箱" },
+  action: {
+    download: "ダウンロード",
+    up: "親フォルダー",
+    new_folder: "新しいフォルダー",
+    upload: "ファイルをアップロード",
+    create_project: "選択したファイルでプロジェクト作成",
+    rename: "名前を変更",
+    delete: "ゴミ箱へ移動",
+    restore: "復元",
+    purge: "完全に削除",
+    purge_all: "ゴミ箱を空にする",
+  },
+  kind: { directory: "フォルダー" },
+  state: { selected: "選択中" },
+  empty: { files: "このフォルダーは空です", trash: "ゴミ箱は空です" },
+  upload: { done: "完了", failed: "失敗" },
+  prompt: { project_name: "プロジェクト名", new_folder: "フォルダー名", rename: "新しい名前" },
+  notice: {
+    project_created: "プロジェクトを作成しました",
+    folder_created: "フォルダーを作成しました",
+    moved_to_trash: "ゴミ箱へ移動しました",
+    renamed: "名前を変更しました",
+  },
+};

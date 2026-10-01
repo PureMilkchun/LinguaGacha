@@ -1,3 +1,4 @@
+import { Readable } from "node:stream";
 import type { AgentApprovalMode } from "../../domain/setting";
 import { AgentTokenSpeed } from "./agent-token-speed";
 import { uploaded_file } from "../../test/agent-upload-fixture";
@@ -2196,6 +2197,13 @@ describe("AgentService", () => {
     };
     vi.spyOn(workspace, "describe_file").mockReturnValue(file);
     expect(service.describe_workspace_file({ sessionId, path: file.path })).toEqual(file);
+    const download = { name: "报告.md", size: 6, stream: Readable.from(["报告"]) };
+    const open = vi.spyOn(workspace, "open_file").mockReturnValue(download);
+    expect(service.read_workspace_file(file.path, sessionId)).toBe(download);
+    expect(() => service.read_workspace_file(file.path, "old")).toThrowError(
+      expect.objectContaining({ code: "file.not_found" }),
+    );
+    expect(open).toHaveBeenCalledOnce();
     expect(() =>
       service.describe_workspace_file({ sessionId: "old", path: file.path }),
     ).toThrowError(expect.objectContaining({ code: "file.not_found" }));
@@ -2222,6 +2230,7 @@ describe("AgentService", () => {
       activate_path: vi.fn(async () => ({ status: "cancelled" as const })),
       read_document: vi.fn(async () => ({ path: "work/report.md", content: "报告" })),
       describe_file: vi.fn(),
+      open_file: vi.fn(),
       read_document_image: vi.fn(async () => ({ bytes: new Uint8Array(), mime: "image/png" })),
       invalidate_links: vi.fn(),
       reset_workspace: vi.fn(async () => undefined),
@@ -3646,6 +3655,7 @@ describe("AgentService", () => {
         activate_path: vi.fn(async () => ({ status: "cancelled" as const })),
         read_document: vi.fn(async () => ({ path: "work/report.md", content: "报告" })),
         describe_file: vi.fn(),
+        open_file: vi.fn(),
         read_document_image: vi.fn(async () => ({ bytes: new Uint8Array(), mime: "image/png" })),
         invalidate_links: vi.fn(),
         reset_workspace: vi.fn(async () => undefined),

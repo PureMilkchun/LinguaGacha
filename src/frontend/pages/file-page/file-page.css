@@ -1,0 +1,333 @@
+/*
+ * 文件管理页样式。
+ *
+ * 这是本项目里少数**直接按窄屏写**的页面：桌面端用系统文件对话框选路径，
+ * 没有这页的使用场景，因此不需要先满足桌面再压窄。
+ *
+ * 触摸目标一律 ≥44px；主操作固定在底部（拇指可达）；不依赖 hover。
+ */
+
+.file-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ui-page-gap);
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+/* ── 顶部：文件 / 回收站 切换 ── */
+
+.file-page__tabs {
+  display: flex;
+  gap: 6px;
+  flex: 0 0 auto;
+}
+
+.file-page__tab {
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--ui-radius-pill);
+  background: var(--color-card);
+  color: var(--color-muted-foreground);
+  font: inherit;
+  font-size: var(--ui-font-size-14);
+  cursor: pointer;
+}
+
+.file-page__tab[aria-selected="true"] {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+/* ── 路径条 ── */
+
+.file-page__pathbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.file-page__path {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--ui-radius-card);
+  background: var(--color-card);
+  color: var(--color-muted-foreground);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: var(--ui-font-size-12);
+  white-space: nowrap;
+  overflow-x: auto;
+}
+
+/* ── 上传进度 ── */
+
+.file-page__uploads {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.file-page__upload {
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--ui-radius-card);
+  background: var(--color-card);
+}
+
+.file-page__upload-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: var(--ui-font-size-13);
+}
+
+.file-page__upload-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-page__upload-bar {
+  height: 4px;
+  margin-top: 8px;
+  border-radius: 2px;
+  background: var(--color-border);
+  overflow: hidden;
+}
+
+.file-page__upload-fill {
+  height: 100%;
+  background: var(--color-primary);
+  transition: width 150ms linear;
+}
+
+/* ── 列表 ── */
+
+.file-page__list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.file-page__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px 4px 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--ui-radius-card);
+  background: var(--color-card);
+}
+
+.file-page__row[data-selected="true"] {
+  border-color: var(--color-primary);
+}
+
+/* 行主体是按钮：整行可点，满足 44px 触摸下限 */
+.file-page__row-main {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+  min-height: 56px;
+  padding: 8px 4px 8px 12px;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.file-page__row-main--static {
+  cursor: default;
+}
+
+.file-page__row-icon {
+  flex: 0 0 auto;
+  font-size: var(--ui-font-size-20);
+  line-height: 1;
+}
+
+.file-page__row-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.file-page__row-name {
+  font-size: calc(var(--ui-font-size-base) + 1px);
+  /* 长中文名必须能断行，否则窄屏上会被裁掉 */
+  overflow-wrap: anywhere;
+}
+
+.file-page__row-meta {
+  font-size: var(--ui-font-size-12);
+  color: var(--color-muted-foreground);
+}
+
+/* ── 图标按钮 ── */
+
+.file-page__icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--ui-radius-pill);
+  background: var(--color-card);
+  color: var(--color-foreground);
+  font-size: var(--ui-font-size-16);
+  cursor: pointer;
+}
+
+.file-page__icon-button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* ── 空态 ── */
+
+.file-page__empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 40px 24px;
+  color: var(--color-muted-foreground);
+  text-align: center;
+}
+
+.file-page__empty-icon {
+  font-size: var(--ui-font-size-36);
+}
+
+/* ── 底部主操作 ── */
+
+.file-page__actions {
+  display: flex;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.file-page__button {
+  flex: 1;
+  min-height: 52px;
+  padding: 0 16px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--ui-radius-card);
+  background: var(--color-card);
+  color: var(--color-foreground);
+  font: inherit;
+  font-size: calc(var(--ui-font-size-base) + 1px);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.file-page__button--primary {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-primary-foreground);
+}
+
+.file-page__button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+/* ── 轻提示 ── */
+
+.file-page__notice {
+  position: sticky;
+  bottom: 0;
+  flex: 0 0 auto;
+  padding: 10px 14px;
+  border-radius: var(--ui-radius-card);
+  background: var(--color-foreground);
+  color: var(--color-background);
+  font-size: var(--ui-font-size-13);
+  text-align: center;
+}
+
+/* ── 宽屏：内容居中，避免单行过长 ── */
+
+@media (min-width: 900px) {
+  .file-page {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 900px) {
+  .file-page {
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+  }
+  .file-page__list {
+    min-height: 160px;
+  }
+  .file-page__button {
+    min-width: 0;
+    padding: 10px 8px;
+    font-size: var(--ui-font-size-14);
+    overflow-wrap: anywhere;
+  }
+  .file-page__actions {
+    position: sticky;
+    bottom: 0;
+    padding-top: 8px;
+    background: var(--background);
+  }
+}
+
+.file-page__download {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 44px;
+  padding: 0 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--ui-radius-button);
+  color: var(--foreground);
+  font-size: var(--ui-font-size-13);
+  text-decoration: none;
+}
+.file-page__download svg {
+  width: 16px;
+  height: 16px;
+}
+@media (max-width: 480px) {
+  .file-page__row {
+    flex-wrap: wrap;
+    padding: 8px;
+  }
+  .file-page__row-main {
+    flex-basis: 100%;
+    padding-left: 4px;
+  }
+  .file-page__download {
+    margin-left: auto;
+  }
+}

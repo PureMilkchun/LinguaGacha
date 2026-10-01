@@ -8,7 +8,11 @@ import type { TranslationExportFlow } from "@frontend/features/translation-expor
 const api_fetch = vi.hoisted(() =>
   vi.fn(async () => ({ projectPath: "test.lg", warningSummary: { total_count: 0, entries: [] } })),
 );
-vi.mock("@frontend/app/desktop/desktop-api", () => ({ api_fetch }));
+vi.mock("@frontend/app/desktop/desktop-api", () => ({ api_fetch, is_browser_host: () => false }));
+const ui_state = vi.hoisted(() => ({ set_page_ui_state: vi.fn() }));
+vi.mock("@frontend/app/session/project-session-ui-state-context", () => ({
+  useProjectSessionUiState: () => ui_state,
+}));
 vi.mock("@frontend/app/locale/locale-context", () => ({
   useI18n: () => ({ t: (key: string) => key }),
 }));

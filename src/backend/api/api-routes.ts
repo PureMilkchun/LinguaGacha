@@ -9,6 +9,7 @@ import type { BackendServices } from "../bootstrap/backend-services";
 import type { AgentService } from "../agent/agent-service";
 import type { ApiPostJsonRoute, ApiRequestRoute } from "./api-request";
 import { ok } from "./api-types";
+import { register_file_routes } from "./file-routes";
 
 /**
  * 公开路由只消费组合根和 Gateway 提供的传输适配器，不自行创建领域依赖。
@@ -55,6 +56,9 @@ export function register_api_routes(context: ApiRouteContext): void {
       }),
     ),
   );
+  // 服务端文件管理：桌面端不使用（它用系统文件对话框），服务器部署下提供上传与目录浏览
+  register_file_routes(context);
+
   context.postJson("/api/logs/files", () => context.readLogFiles());
   context.postJson("/api/logs/page", (body) => context.readLogPage(body));
   context.postJson("/api/logs/detail", (body) => context.readLogDetail(body));
@@ -127,6 +131,19 @@ export function register_api_routes(context: ApiRouteContext): void {
     return new Response(new Uint8Array(image.bytes), {
       headers: {
         "Content-Type": image.mime,
+        "X-Content-Type-Options": "nosniff",
+        "Cache-Control": "no-store",
+      },
+    });
+  });
+  context.request("GET", "/api/agent/workspace/download", (request) => {
+    const query = new URL(request.url).searchParams;
+    const file = agent.read_workspace_file(query.get("path"), query.get("sessionId"));
+    return new Response(Readable.toWeb(file.stream) as ReadableStream<Uint8Array>, {
+      headers: {
+        "Content-Type": "application/octet-stream",
+        "Content-Length": String(file.size),
+        "Content-Disposition": `attachment; filename*=UTF-8''${encodeURIComponent(file.name)}`,
         "X-Content-Type-Options": "nosniff",
         "Cache-Control": "no-store",
       },

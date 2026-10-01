@@ -534,112 +534,118 @@ export function AgentConversation({ active = true }: { active?: boolean }): JSX.
 
   return (
     <div ref={page_ref} className="agent-page">
-      <section
-        ref={conversation_ref}
-        className="agent-page__conversation"
-        aria-label={t("agent_page.title")}
-        data-following={follow_latest || undefined}
-        onScroll={(event) => {
-          if (active) handle_conversation_scroll(event.currentTarget);
-        }}
-      >
-        <div ref={conversation_content_ref} className="agent-page__conversation-content">
-          {controls.transport === "restore_failed" ? (
-            <div className="agent-page__empty" role="alert">
-              <div className="agent-page__empty-intro">
-                <Bot className="agent-page__empty-icon" aria-hidden="true" />
-                <p>{t("agent_page.error.restore")}</p>
-                <AppButton
-                  type="button"
-                  size="sm"
-                  variant="outline"
-                  onClick={agent_actions.reconnect}
-                >
-                  {t("app.action.retry")}
-                </AppButton>
+      <div className="agent-page__stream-region">
+        <section
+          ref={conversation_ref}
+          className="agent-page__conversation"
+          aria-label={t("agent_page.title")}
+          data-following={follow_latest || undefined}
+          onScroll={(event) => {
+            if (active) handle_conversation_scroll(event.currentTarget);
+          }}
+        >
+          <div ref={conversation_content_ref} className="agent-page__conversation-content">
+            {controls.transport === "restore_failed" ? (
+              <div className="agent-page__empty" role="alert">
+                <div className="agent-page__empty-intro">
+                  <Bot className="agent-page__empty-icon" aria-hidden="true" />
+                  <p>{t("agent_page.error.restore")}</p>
+                  <AppButton
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={agent_actions.reconnect}
+                  >
+                    {t("app.action.retry")}
+                  </AppButton>
+                </div>
               </div>
-            </div>
-          ) : agent_restoring ? (
-            <div className="agent-page__empty" role="status">
-              <div className="agent-page__empty-intro">
-                <Bot className="agent-page__empty-icon" aria-hidden="true" />
-                <p>{t("agent_page.loading")}</p>
+            ) : agent_restoring ? (
+              <div className="agent-page__empty" role="status">
+                <div className="agent-page__empty-intro">
+                  <Bot className="agent-page__empty-icon" aria-hidden="true" />
+                  <p>{t("agent_page.loading")}</p>
+                </div>
               </div>
-            </div>
-          ) : entries.length === 0 ? (
-            <div className="agent-page__empty">
-              <div className="agent-page__empty-intro">
-                <Bot className="agent-page__empty-icon" aria-hidden="true" />
-                <p className="agent-page__empty-message">{t("agent_page.empty.message")}</p>
-              </div>
-              <div className="agent-page__suggestions">
-                <button
-                  type="button"
-                  className="agent-page__suggestion"
-                  onClick={() =>
-                    composer_ref.current?.write_draft(
-                      t("agent_page.empty.suggestions.capabilities"),
-                    )
-                  }
-                >
-                  <Sparkles className="agent-page__suggestion-icon" aria-hidden="true" />
-                  <span className="agent-page__suggestion-label">
-                    {t("agent_page.empty.suggestions.capabilities")}
-                  </span>
-                </button>
-                {AGENT_TASK_SUGGESTIONS.filter((suggestion) =>
-                  skills.some((skill) => skill.name === suggestion.skillName),
-                ).map(({ skillName, suggestionKey, Icon }) => (
+            ) : entries.length === 0 ? (
+              <div className="agent-page__empty">
+                <div className="agent-page__empty-intro">
+                  <Bot className="agent-page__empty-icon" aria-hidden="true" />
+                  <p className="agent-page__empty-message">{t("agent_page.empty.message")}</p>
+                </div>
+                <div className="agent-page__suggestions">
                   <button
-                    key={suggestionKey}
                     type="button"
                     className="agent-page__suggestion"
                     onClick={() =>
                       composer_ref.current?.write_draft(
-                        `${t(suggestionKey)} ${format_agent_reference({ kind: "skill", name: skillName })}`,
+                        t("agent_page.empty.suggestions.capabilities"),
                       )
                     }
                   >
-                    <Icon className="agent-page__suggestion-icon" aria-hidden="true" />
+                    <Sparkles className="agent-page__suggestion-icon" aria-hidden="true" />
                     <span className="agent-page__suggestion-label">
-                      {t(suggestionKey)}{" "}
-                      <span className="agent-mention-token">
-                        <span>{format_agent_reference({ kind: "skill", name: skillName })}</span>
-                      </span>
+                      {t("agent_page.empty.suggestions.capabilities")}
                     </span>
                   </button>
-                ))}
+                  {AGENT_TASK_SUGGESTIONS.filter((suggestion) =>
+                    skills.some((skill) => skill.name === suggestion.skillName),
+                  ).map(({ skillName, suggestionKey, Icon }) => (
+                    <button
+                      key={suggestionKey}
+                      type="button"
+                      className="agent-page__suggestion"
+                      onClick={() =>
+                        composer_ref.current?.write_draft(
+                          `${t(suggestionKey)} ${format_agent_reference({ kind: "skill", name: skillName })}`,
+                        )
+                      }
+                    >
+                      <Icon className="agent-page__suggestion-icon" aria-hidden="true" />
+                      <span className="agent-page__suggestion-label">
+                        {t(suggestionKey)}{" "}
+                        <span className="agent-mention-token">
+                          <span>{format_agent_reference({ kind: "skill", name: skillName })}</span>
+                        </span>
+                      </span>
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
-          ) : (
-            <AgentTimeline
-              active={active}
-              skills={skills}
-              entries={entries}
-              follow_reset_revision={follow_reset_revision}
-              on_continue={continue_latest_round}
-              on_edit={start_edit}
-              render_entry_editor={render_entry_editor}
-              on_add_annotation={add_response_annotation}
-              revision_disabled={
-                controls.command !== null ||
-                active_inline_edit !== null ||
-                is_running ||
-                compacting ||
-                unavailable_reason !== null
-              }
-              continue_disabled={
-                controls.command !== null || is_running || compacting || unavailable_reason !== null
-              }
-              annotation_disabled={
-                controls.command !== null ||
-                active_inline_edit !== null ||
-                unavailable_reason !== null
-              }
-            />
-          )}
-        </div>
-      </section>
+            ) : (
+              <AgentTimeline
+                active={active}
+                skills={skills}
+                entries={entries}
+                follow_reset_revision={follow_reset_revision}
+                on_continue={continue_latest_round}
+                on_edit={start_edit}
+                render_entry_editor={render_entry_editor}
+                on_add_annotation={add_response_annotation}
+                revision_disabled={
+                  controls.command !== null ||
+                  active_inline_edit !== null ||
+                  is_running ||
+                  compacting ||
+                  unavailable_reason !== null
+                }
+                continue_disabled={
+                  controls.command !== null ||
+                  is_running ||
+                  compacting ||
+                  unavailable_reason !== null
+                }
+                annotation_disabled={
+                  controls.command !== null ||
+                  active_inline_edit !== null ||
+                  unavailable_reason !== null
+                }
+              />
+            )}
+          </div>
+        </section>
+        <div className="agent-page__follow-floating">{follow_latest_control}</div>
+      </div>
 
       <div ref={input_transition.region_ref} className="agent-page__bottom-region">
         <div ref={input_transition.area_ref} className="agent-page__input-area">
@@ -685,7 +691,6 @@ export function AgentConversation({ active = true }: { active?: boolean }): JSX.
                 />
               </div>
             ) : null}
-            {follow_latest_control}
           </div>
 
           <div className="agent-page__operation-zone">

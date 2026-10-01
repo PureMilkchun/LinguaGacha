@@ -2,6 +2,7 @@ import { zh_cn_glossary_page } from "../zh-CN/glossary-page";
 import type { LocaleMessageSchema } from "../../types";
 
 export const en_us_glossary_page = {
+  columns: "Columns",
   title: "Glossary",
   toggle: {
     tooltip:

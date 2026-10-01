@@ -23,6 +23,7 @@ export type DesktopPlatform =
 
 export type DesktopBackendApiInfo = {
   baseUrl: string; // main 启动公开 API Gateway 后注入给 preload 的本机访问地址
+  browser?: boolean; // 浏览器桥接显式声明下载由浏览器承担；旧 preload 沿用桌面能力。
 };
 
 export type DesktopShellInfo = {

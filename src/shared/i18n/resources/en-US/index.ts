@@ -1,3 +1,4 @@
+import { en_us_file_page } from "./file-page";
 import { en_us_skills_page } from "./skills-page";
 import { en_us_batch_translation } from "./batch-translation";
 import { en_us_agent_page } from "./agent-page";
@@ -34,6 +35,7 @@ export const en_us_messages = {
   glossary_page: en_us_glossary_page,
   laboratory_page: en_us_laboratory_page,
   log_window_page: en_us_log_window_page,
+  file_page: en_us_file_page,
   model_page: en_us_model_page,
   post_translation_replacement_page: en_us_post_translation_replacement_page,
   pre_translation_replacement_page: en_us_pre_translation_replacement_page,

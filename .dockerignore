@@ -1,0 +1,81 @@
+# ============================================================
+# LinguaGacha Docker context exclusions
+# ============================================================
+
+# 依赖与构建产物（每个阶段在镜像内独立安装/构建）
+# 注意: build/ 是构建产物根目录; buildtools/ 是构建脚本, 必须进入上下文
+node_modules
+build/
+
+# 版本控制
+.git
+.gitignore
+.gitattributes
+
+# 开发配置
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# 日志与临时文件
+*.log
+logs
+tmp
+tmp/
+
+# Electron 专属文件（Docker 部署不需要）
+out/
+dist-electron/
+*.dmg
+*.AppImage
+*.deb
+*.rpm
+*.snap
+*.nsis
+*.blockmap
+*.yml
+!docker-compose.yml
+
+# 测试与代码质量
+coverage
+test-results
+*.test.ts
+*.test.js
+*.spec.ts
+*.spec.js
+oxlint.config.*
+vitest.config.*
+
+# 文档（不进入构建上下文）
+docs
+*.md
+!README.md
+
+# 环境文件（绝不打包 token）
+.env
+.env.*
+!.env.example
+
+# 内置提示词与技能是运行时资源，不能按文档排除。
+!builtin/**
+
+# NAS 持久化目录与凭据，禁止进入镜像构建上下文
+/userdata
+/data
+/log
+/logs
+/input
+/output
+/deployment-records
+/.learnings
+*.lg
+*.sqlite
+*.sqlite3
+*.db
+*.pem
+*.key
+*.p12
+*.pfx
+compose.yaml

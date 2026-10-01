@@ -14,6 +14,7 @@ const files = vi.hoisted(() => ({
 import { AgentFileContext } from "./agent-file-context";
 vi.mock("@frontend/app/desktop/desktop-api", () => ({
   api_fetch: files.api,
+  is_browser_host: () => false,
   api_blob: async () => new Blob([], { type: "image/png" }),
 }));
 import { uploaded_file } from "../../../test/agent-upload-fixture";

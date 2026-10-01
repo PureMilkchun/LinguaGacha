@@ -1,4 +1,4 @@
-import { type JSX, useState } from "react";
+import { type JSX, useState, useRef, useEffect } from "react";
 import {
   ChevronDown,
   FileOutput,
@@ -42,6 +42,10 @@ export function AgentTaskToolbar(props: {
   on_approval_mode_change: (mode: AgentApprovalMode) => void;
 }): JSX.Element {
   const { t } = useI18n();
+  const tools_ref = useRef<HTMLDetailsElement>(null);
+  useEffect(() => {
+    if (props.locked && tools_ref.current) tools_ref.current.open = false;
+  }, [props.locked]);
   const [approval_open, set_approval_open] = useState(false); // 当前审批菜单的展开状态
   // 在提交菜单前清除展开状态，交互区恢复时菜单保持关闭。
   if (props.locked && approval_open) set_approval_open(false);
@@ -58,124 +62,130 @@ export function AgentTaskToolbar(props: {
   );
   const ApprovalModeIcon = props.approval_mode === "auto" ? ShieldCheck : ShieldQuestionMark;
   return (
-    <>
-      <Tooltip>
-        <TooltipTrigger
-          render={
-            <TooltipTarget>
-              <AppButton
-                type="button"
-                size="sm"
-                variant="ghost"
-                className="agent-composer__reset"
-                disabled={!props.can_reset}
-                aria-keyshortcuts={props.can_reset ? new_task_aria_shortcut : undefined}
-                onClick={props.on_reset}
-              >
-                <MessageSquarePlus aria-hidden="true" />
-                <span>{t("agent_page.action.new_task")}</span>
-              </AppButton>
-            </TooltipTarget>
-          }
-        />
-        <TooltipContent>
-          {props.can_reset ? (
-            <ShortcutTooltipRow label={t("agent_page.action.new_task")} shortcut="create" />
-          ) : (
-            <p>{t("agent_page.action.new_task")}</p>
-          )}
-        </TooltipContent>
-      </Tooltip>
-      <AppButton
-        type="button"
-        size="sm"
-        variant="ghost"
-        className="agent-composer__export"
-        disabled={!translation_export.can_request_export}
-        onClick={translation_export.request_export}
-      >
-        <FileOutput aria-hidden="true" />
-        <span>{t("workbench_page.action.generate_translation")}</span>
-      </AppButton>
-      {props.disconnected ? (
-        <Tooltip>
-          <TooltipTrigger
-            render={
-              <span className="agent-composer__connection-status" role="status">
-                <WifiOff className="size-4 shrink-0" aria-hidden="true" />
-                <span className="truncate">{t("agent_page.error.connection")}</span>
-              </span>
-            }
-          />
-          <TooltipContent>{t("agent_page.error.connection")}</TooltipContent>
-        </Tooltip>
-      ) : null}
-      <AgentComposerModelControls
-        locked={props.locked}
-        controller={props.model_selection}
-        context_tokens={props.context.tokens}
-        context_limits={props.context.limits}
-        usage={props.usage}
-        on_agent_model_select={props.on_agent_model_select}
-      />
-      <AppDropdownMenu open={approval_open} onOpenChange={set_approval_open}>
+    <details ref={tools_ref} className="agent-composer__tools">
+      <summary className="agent-composer__tools-toggle">
+        <ChevronDown aria-hidden="true" />
+        <span>{t("agent_page.action.tools")}</span>
+      </summary>
+      <div className="agent-composer__tools-panel">
         <Tooltip>
           <TooltipTrigger
             render={
               <TooltipTarget>
-                <AppDropdownMenuTrigger
-                  render={
-                    <AppButton
-                      type="button"
-                      size="sm"
-                      variant="ghost"
-                      className="agent-composer__approval-trigger"
-                      data-approval-mode={props.approval_mode}
-                      disabled={props.approval_disabled}
-                      aria-label={approval_mode_label}
-                    >
-                      <ApprovalModeIcon
-                        className="agent-composer__approval-icon"
-                        aria-hidden="true"
-                      />
-                      <span className="agent-composer__approval-label">
-                        {t(
-                          props.approval_mode === "auto"
-                            ? "agent_page.approval.auto_short"
-                            : "agent_page.approval.manual_short",
-                        )}
-                      </span>
-                      <ChevronDown aria-hidden="true" />
-                    </AppButton>
-                  }
-                />
+                <AppButton
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  className="agent-composer__reset"
+                  disabled={!props.can_reset}
+                  aria-keyshortcuts={props.can_reset ? new_task_aria_shortcut : undefined}
+                  onClick={props.on_reset}
+                >
+                  <MessageSquarePlus aria-hidden="true" />
+                  <span>{t("agent_page.action.new_task")}</span>
+                </AppButton>
               </TooltipTarget>
             }
           />
           <TooltipContent>
-            <p>{t("agent_page.approval.tooltip")}</p>
+            {props.can_reset ? (
+              <ShortcutTooltipRow label={t("agent_page.action.new_task")} shortcut="create" />
+            ) : (
+              <p>{t("agent_page.action.new_task")}</p>
+            )}
           </TooltipContent>
         </Tooltip>
-        <AppDropdownMenuContent align="end" matchTriggerWidth={false}>
-          <AppDropdownMenuRadioGroup
-            value={props.approval_mode}
-            onValueChange={(value) => {
-              if (!props.approval_disabled && (value === "manual" || value === "auto")) {
-                props.on_approval_mode_change(value);
+        <AppButton
+          type="button"
+          size="sm"
+          variant="ghost"
+          className="agent-composer__export"
+          disabled={!translation_export.can_request_export}
+          onClick={translation_export.request_export}
+        >
+          <FileOutput aria-hidden="true" />
+          <span>{t("workbench_page.action.generate_translation")}</span>
+        </AppButton>
+        {props.disconnected ? (
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <span className="agent-composer__connection-status" role="status">
+                  <WifiOff className="size-4 shrink-0" aria-hidden="true" />
+                  <span className="truncate">{t("agent_page.error.connection")}</span>
+                </span>
               }
-            }}
-          >
-            <AppDropdownMenuRadioItem value="manual" disabled={props.approval_disabled}>
-              <ShieldQuestionMark aria-hidden="true" />
-              {t("agent_page.approval.manual")}
-            </AppDropdownMenuRadioItem>
-            <AppDropdownMenuRadioItem value="auto" disabled={props.approval_disabled}>
-              <ShieldCheck aria-hidden="true" />
-              {t("agent_page.approval.auto")}
-            </AppDropdownMenuRadioItem>
-          </AppDropdownMenuRadioGroup>
-        </AppDropdownMenuContent>
-      </AppDropdownMenu>
-    </>
+            />
+            <TooltipContent>{t("agent_page.error.connection")}</TooltipContent>
+          </Tooltip>
+        ) : null}
+        <AgentComposerModelControls
+          locked={props.locked}
+          controller={props.model_selection}
+          context_tokens={props.context.tokens}
+          context_limits={props.context.limits}
+          usage={props.usage}
+          on_agent_model_select={props.on_agent_model_select}
+        />
+        <AppDropdownMenu open={approval_open} onOpenChange={set_approval_open}>
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <TooltipTarget>
+                  <AppDropdownMenuTrigger
+                    render={
+                      <AppButton
+                        type="button"
+                        size="sm"
+                        variant="ghost"
+                        className="agent-composer__approval-trigger"
+                        data-approval-mode={props.approval_mode}
+                        disabled={props.approval_disabled}
+                        aria-label={approval_mode_label}
+                      >
+                        <ApprovalModeIcon
+                          className="agent-composer__approval-icon"
+                          aria-hidden="true"
+                        />
+                        <span className="agent-composer__approval-label">
+                          {t(
+                            props.approval_mode === "auto"
+                              ? "agent_page.approval.auto_short"
+                              : "agent_page.approval.manual_short",
+                          )}
+                        </span>
+                        <ChevronDown aria-hidden="true" />
+                      </AppButton>
+                    }
+                  />
+                </TooltipTarget>
+              }
+            />
+            <TooltipContent>
+              <p>{t("agent_page.approval.tooltip")}</p>
+            </TooltipContent>
+          </Tooltip>
+          <AppDropdownMenuContent align="end" matchTriggerWidth={false}>
+            <AppDropdownMenuRadioGroup
+              value={props.approval_mode}
+              onValueChange={(value) => {
+                if (!props.approval_disabled && (value === "manual" || value === "auto")) {
+                  props.on_approval_mode_change(value);
+                }
+              }}
+            >
+              <AppDropdownMenuRadioItem value="manual" disabled={props.approval_disabled}>
+                <ShieldQuestionMark aria-hidden="true" />
+                {t("agent_page.approval.manual")}
+              </AppDropdownMenuRadioItem>
+              <AppDropdownMenuRadioItem value="auto" disabled={props.approval_disabled}>
+                <ShieldCheck aria-hidden="true" />
+                {t("agent_page.approval.auto")}
+              </AppDropdownMenuRadioItem>
+            </AppDropdownMenuRadioGroup>
+          </AppDropdownMenuContent>
+        </AppDropdownMenu>
+      </div>
+    </details>
   );
 }

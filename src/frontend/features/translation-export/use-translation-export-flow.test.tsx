@@ -6,13 +6,22 @@ import { useTranslationExportFlow } from "./use-translation-export-flow";
 
 const mocks = vi.hoisted(() => ({
   api_fetch: vi.fn(),
+  browser: false,
+  folder: vi.fn(),
+  route: vi.fn(),
   push_toast: vi.fn(),
   navigate_to_agent: vi.fn(),
   selected_route: "workbench",
   project_snapshot: { loaded: true, path: "E:/demo/sample.lg" },
 }));
 
-vi.mock("@frontend/app/desktop/desktop-api", () => ({ api_fetch: mocks.api_fetch }));
+vi.mock("@frontend/app/desktop/desktop-api", () => ({
+  api_fetch: mocks.api_fetch,
+  is_browser_host: () => mocks.browser,
+}));
+vi.mock("@frontend/app/session/project-session-ui-state-context", () => ({
+  useProjectSessionUiState: () => ({ set_page_ui_state: mocks.folder }),
+}));
 vi.mock("@frontend/app/feedback/desktop-toast", () => ({ push_toast: mocks.push_toast }));
 vi.mock("@frontend/app/locale/locale-context", () => ({
   useI18n: () => ({ t: (key: string) => key }),
@@ -20,6 +29,7 @@ vi.mock("@frontend/app/locale/locale-context", () => ({
 vi.mock("@frontend/app/navigation/navigation-context", () => ({
   useAppNavigation: () => ({
     navigate_to_agent: mocks.navigate_to_agent,
+    navigate_to_route: mocks.route,
     selected_route: mocks.selected_route,
   }),
 }));
@@ -44,6 +54,9 @@ describe("useTranslationExportFlow", () => {
   let latest_flow: ReturnType<typeof useTranslationExportFlow> | null = null;
 
   beforeEach(() => {
+    mocks.browser = false;
+    mocks.folder.mockClear();
+    mocks.route.mockClear();
     mocks.api_fetch.mockReset();
     mocks.push_toast.mockReset();
     mocks.navigate_to_agent.mockReset();
@@ -97,6 +110,25 @@ describe("useTranslationExportFlow", () => {
       text: expect.stringMatching(/\S+ @skill\([^)]+\)$/),
       mode: "if-empty",
     });
+    expect(latest_flow?.state.phase).toBe("closed");
+  });
+
+  it("浏览器导出完成后打开输出目录，提供真实文件下载入口", async () => {
+    mocks.browser = true;
+    mocks.api_fetch.mockResolvedValueOnce({
+      projectPath: mocks.project_snapshot.path,
+      warningSummary: { total_count: 0, entries: [] },
+    });
+    mocks.api_fetch.mockResolvedValueOnce({
+      accepted: true,
+      output_path: "/data/projects/译文输出",
+      pdf_files: [],
+    });
+    await render_probe();
+    await act(async () => latest_flow?.request_export());
+    await act(async () => latest_flow?.confirm_export());
+    expect(mocks.folder).toHaveBeenCalledWith("file-browser", { path: "/data/projects/译文输出" });
+    expect(mocks.route).toHaveBeenCalledWith("files");
     expect(latest_flow?.state.phase).toBe("closed");
   });
 

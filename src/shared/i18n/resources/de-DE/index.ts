@@ -1,3 +1,4 @@
+import { de_de_file_page } from "./file-page";
 import { de_de_skills_page } from "./skills-page";
 import { de_de_batch_translation } from "./batch-translation";
 import { de_de_agent_page } from "./agent-page";
@@ -34,6 +35,7 @@ export const de_de_messages = {
   glossary_page: de_de_glossary_page,
   laboratory_page: de_de_laboratory_page,
   log_window_page: de_de_log_window_page,
+  file_page: de_de_file_page,
   model_page: de_de_model_page,
   post_translation_replacement_page: de_de_post_translation_replacement_page,
   pre_translation_replacement_page: de_de_pre_translation_replacement_page,

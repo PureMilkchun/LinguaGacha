@@ -6,6 +6,7 @@ export const ko_kr_agent_page = {
     view: "보기",
     save_as: "다른 이름으로 저장",
     read_failed: "문서를 읽을 수 없습니다",
+    back_to_conversation: "대화로 돌아가기",
   },
   batch_translation_model: {
     follow: "같은 모델 사용",
@@ -110,6 +111,7 @@ export const ko_kr_agent_page = {
     error: "컨텍스트 압축에 실패했습니다 …",
   },
   action: {
+    tools: "추가 도구",
     send: "전송",
     stop: "중지",
     applying: "프로젝트 변경 사항을 적용 중입니다. 완료될 때까지 중지할 수 없습니다",

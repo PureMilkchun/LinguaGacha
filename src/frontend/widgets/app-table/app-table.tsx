@@ -18,6 +18,7 @@ import {
   type ReactNode,
 } from "react";
 
+import { use_is_narrow_viewport } from "@frontend/widgets/interactions/use-is-narrow-viewport";
 import { cn } from "@frontend/shadcn/classnames";
 import { ArrowDownToLine, ArrowUpToLine } from "lucide-react";
 import { useI18n } from "@frontend/app/locale/locale-context";
@@ -56,6 +57,7 @@ import type {
 } from "@frontend/widgets/app-table/app-table-types";
 import {
   APP_TABLE_DEFAULT_ROW_HEIGHT,
+  APP_TABLE_MOBILE_ROW_HEIGHT,
   APP_TABLE_DEFAULT_VIRTUAL_OVERSCAN,
   build_app_table_placeholder_fill,
   build_app_table_spacer_heights,
@@ -313,7 +315,10 @@ export function AppTable<Row>(props: AppTableProps<Row>): JSX.Element {
   // 区分捕获与恢复是否发生在同一次 layout commit。
   const layout_commit_id_ref = useRef(0);
   // 表格虚拟计算的唯一行高来源，CSS 变量和虚拟定位共用它。
-  const row_height = row_height_prop ?? APP_TABLE_DEFAULT_ROW_HEIGHT;
+  const is_narrow = use_is_narrow_viewport();
+  const row_height = is_narrow
+    ? Math.max(row_height_prop ?? APP_TABLE_DEFAULT_ROW_HEIGHT, APP_TABLE_MOBILE_ROW_HEIGHT)
+    : (row_height_prop ?? APP_TABLE_DEFAULT_ROW_HEIGHT);
   const [viewport_element, set_viewport_element] = useState<HTMLElement | null>(null);
   const [viewport_height, set_viewport_height] = useState(row_height);
   const [drag_overlay_width, set_drag_overlay_width] = useState<number | null>(null);

@@ -1,0 +1,33 @@
+export const en_us_file_page = {
+  picker: {
+    search: "Search this folder",
+    filename: "File name",
+    selected: "{COUNT} files selected",
+    current_directory: "Choose this folder",
+  },
+  title: "Files",
+  tab: { files: "Files", trash: "Trash" },
+  action: {
+    download: "Download",
+    up: "Parent folder",
+    new_folder: "New folder",
+    upload: "Upload files",
+    create_project: "Create project from selection",
+    rename: "Rename",
+    delete: "Move to trash",
+    restore: "Restore",
+    purge: "Delete permanently",
+    purge_all: "Empty trash",
+  },
+  kind: { directory: "Folder" },
+  state: { selected: "Selected" },
+  empty: { files: "This folder is empty", trash: "Trash is empty" },
+  upload: { done: "Done", failed: "Failed" },
+  prompt: { project_name: "Project name", new_folder: "Folder name", rename: "New name" },
+  notice: {
+    project_created: "Project created",
+    folder_created: "Folder created",
+    moved_to_trash: "Moved to trash",
+    renamed: "Renamed",
+  },
+};

@@ -107,6 +107,30 @@ function AppDropdownMenuItem({
   );
 }
 
+/** 多选菜单保留展开状态，适用于用户逐项选择显示列。 */
+function AppDropdownMenuCheckboxItem({
+  className,
+  children,
+  ...props
+}: DropdownMenuPrimitive.CheckboxItem.Props): JSX.Element {
+  return (
+    <DropdownMenuPrimitive.CheckboxItem
+      data-slot="dropdown-menu-checkbox-item"
+      closeOnClick={false}
+      className={cn(
+        "relative flex min-h-9 cursor-default items-center gap-2 rounded-md py-1 pr-8 pl-2 outline-hidden select-none focus:bg-accent data-disabled:opacity-50 text-[length:var(--ui-font-size-13)]",
+        className,
+      )}
+      {...props}
+    >
+      {children}
+      <DropdownMenuPrimitive.CheckboxItemIndicator className="absolute right-2">
+        <CheckIcon className="size-4" />
+      </DropdownMenuPrimitive.CheckboxItemIndicator>
+    </DropdownMenuPrimitive.CheckboxItem>
+  );
+}
+
 function AppDropdownMenuRadioGroup(props: DropdownMenuPrimitive.RadioGroup.Props): JSX.Element {
   return <DropdownMenuPrimitive.RadioGroup data-slot="dropdown-menu-radio-group" {...props} />;
 }
@@ -251,6 +275,7 @@ function AppDropdownMenuSubContent({
 export {
   AppDropdownMenu,
   AppDropdownMenuContent,
+  AppDropdownMenuCheckboxItem,
   AppDropdownMenuGroup,
   AppDropdownMenuItem,
   AppDropdownMenuLabel,

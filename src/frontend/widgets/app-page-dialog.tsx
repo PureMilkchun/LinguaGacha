@@ -1,4 +1,4 @@
-import type { JSX, ReactNode } from "react";
+import type { JSX, ReactNode, ComponentProps } from "react";
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
 
 import { useI18n } from "@frontend/app/locale/locale-context";
@@ -10,6 +10,7 @@ type AppPageDialogDismissBehavior = "default" | "escape-only" | "blocked";
 
 type AppPageDialogProps = {
   open: boolean;
+  initialFocus?: ComponentProps<typeof DialogPrimitive.Popup>["initialFocus"];
   title: string;
   size?: AppPageDialogSize;
   onClose: () => void | Promise<void>;
@@ -74,6 +75,7 @@ export function AppPageDialog(props: AppPageDialogProps): JSX.Element {
         />
         <DialogPrimitive.Popup
           data-slot="dialog-content"
+          initialFocus={props.initialFocus}
           className={cn(
             "fixed top-1/2 left-1/2 z-(--ui-layer-overlay) flex max-h-[calc(100vh-48px)] w-[calc(100vw-48px)] max-w-[calc(100vw-48px)] -translate-x-1/2 -translate-y-1/2 flex-col gap-0 overflow-hidden rounded-xl bg-popover p-0 text-sm text-foreground ring-1 ring-foreground/10 duration-100 outline-none data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
             SIZE_CLASS_NAME_BY_VALUE[size],
@@ -89,7 +91,7 @@ export function AppPageDialog(props: AppPageDialogProps): JSX.Element {
 
           <div
             className={cn(
-              "flex min-h-0 flex-1 flex-col overflow-auto px-6 py-6",
+              "app-page-dialog__body flex min-h-0 flex-1 flex-col overflow-auto px-6 py-6",
               props.bodyClassName,
             )}
           >
@@ -99,7 +101,7 @@ export function AppPageDialog(props: AppPageDialogProps): JSX.Element {
           {footer_content === null ? null : (
             <div
               className={cn(
-                "flex flex-col-reverse gap-2 border-t bg-muted/50 px-6 py-4 sm:flex-row sm:justify-end",
+                "app-page-dialog__footer flex shrink-0 flex-col-reverse gap-2 border-t bg-muted/50 px-6 py-4 sm:flex-row sm:justify-end",
                 props.footerClassName,
               )}
             >

@@ -1,0 +1,22 @@
+services:
+  linguagacha:
+    image: linguagacha-nas:0.125-local
+    restart: unless-stopped
+    ports:
+      - "8787:8787"
+    environment:
+      LG_API_HOST: "0.0.0.0"
+      LG_API_PORT: "8787"
+      LG_FILES_ROOT: "/data"
+    volumes:
+      - ./data:/data
+      - userdata:/app/userdata
+      - logs:/app/log
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
+volumes:
+  userdata:
+  logs:

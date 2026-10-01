@@ -104,3 +104,33 @@ it("刷新锚点等待新正文，旧正文不能提前消费定位意图", asyn
     locate.mockRestore();
   }
 });
+
+it("JSON 和 CSV 文本预览保持原文，不执行 HTML 或 Markdown", async () => {
+  const text = '{"value":"<script>alert(1)</script>"}\nname,value\nhello,world';
+  vi.mocked(api_fetch).mockResolvedValueOnce({ content: text });
+  const container = document.createElement("div");
+  const root = createRoot(container);
+  try {
+    await act(async () =>
+      root.render(
+        <AgentPreviewPage
+          active
+          scroll={{}}
+          document={{
+            path: "work/report.json",
+            name: "报告",
+            kind: "file",
+            preview: "text",
+            activation: 0,
+            anchor: null,
+          }}
+        />,
+      ),
+    );
+    expect(container.querySelector("pre")?.textContent).toBe(text);
+    expect(container.querySelector("script")).toBeNull();
+    expect(container.querySelector("h1")).toBeNull();
+  } finally {
+    await act(async () => root.unmount());
+  }
+});

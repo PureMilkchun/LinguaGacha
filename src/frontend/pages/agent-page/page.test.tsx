@@ -11,6 +11,7 @@ const mocks = vi.hoisted(() => ({
   mounts: vi.fn(),
   unmounts: vi.fn(),
   session: "session-1",
+  narrow: false,
   needs_response: false,
   draft_attachment: false,
   saved: null as unknown,
@@ -22,10 +23,15 @@ const mocks = vi.hoisted(() => ({
 }));
 vi.mock("@frontend/app/desktop/desktop-api", () => ({
   api_fetch: mocks.api,
+  is_browser_host: () => true,
+  api_file_url: (path: string) => `http://localhost${path}`,
   open_external_url: vi.fn(),
   api_blob: mocks.blob,
 }));
 vi.mock("@frontend/app/feedback/desktop-toast", () => ({ push_toast: mocks.toast }));
+vi.mock("@frontend/widgets/interactions/use-is-narrow-viewport", () => ({
+  use_is_narrow_viewport: () => mocks.narrow,
+}));
 vi.mock("@frontend/app/locale/locale-context", () => ({ useI18n: () => ({ t: mocks.t }) }));
 vi.mock("@frontend/app/appearance/appearance-context", () => ({
   useAppearance: () => ({ resolved_theme: "light" }),
@@ -91,6 +97,7 @@ describe("Agent 文档标签", () => {
     mocks.blob.mockReset();
     mocks.blob.mockResolvedValue(new Blob([new Uint8Array([0, 255])], { type: "image/png" }));
     mocks.session = "session-1";
+    mocks.narrow = false;
     mocks.needs_response = false;
     mocks.draft_attachment = false;
     mocks.saved = null;
@@ -243,6 +250,56 @@ describe("Agent 文档标签", () => {
     await open_link("work/chart.png");
     expect(container.querySelectorAll(".media-viewport__viewport")).toHaveLength(1);
     expect(tab("work/chart.png")?.getAttribute("aria-selected")).toBe("true");
+  });
+
+  it("窄屏打开文档时预览独占整页，返回后回到对话", async () => {
+    mocks.narrow = true;
+    await render();
+    await open_link("work/report.md");
+
+    // 标签条被页头取代：窄屏下预览成为单独一页，而不是与对话并列的标签
+    const list = container.querySelector<HTMLElement>('[role="tablist"]')!;
+    expect(list.hidden).toBe(true);
+
+    const header = container.querySelector<HTMLElement>(".agent-pages__page-header")!;
+    expect(header).not.toBeNull();
+    expect(header.textContent).toContain("report.md");
+    // 返回按钮文案来自 i18n（测试里 t 是恒等函数）
+    expect(header.querySelector(".agent-pages__back")?.textContent).toContain(
+      "agent_page.document.back_to_conversation",
+    );
+    // 文档面板可见、对话面板隐藏
+    expect(container.querySelectorAll(".agent-document")).toHaveLength(1);
+
+    await click(header.querySelector(".agent-pages__back"));
+    expect(container.querySelector(".agent-pages__page-header")).toBeNull();
+    // 面板用 keepMounted 保留实例，因此返回后是「隐藏」而不是「移除」
+    expect(
+      container
+        .querySelector<HTMLElement>(".agent-document")
+        ?.closest<HTMLElement>('[role="tabpanel"]')?.hidden,
+    ).toBe(true);
+    expect(
+      container.querySelector<HTMLElement>("textarea")?.closest<HTMLElement>('[role="tabpanel"]')
+        ?.hidden,
+    ).toBe(false);
+    // 关键：切到预览页再回来，对话实例没有被卸载（草稿与滚动位置才不会丢）
+    expect(mocks.unmounts).not.toHaveBeenCalled();
+  });
+
+  it("窄屏没有打开文档时保持对话原样", async () => {
+    mocks.narrow = true;
+    await render();
+    expect(container.querySelector(".agent-pages__page-header")).toBeNull();
+    expect(container.querySelector("textarea")).not.toBeNull();
+  });
+
+  it("宽屏仍是并列标签：不出现页头，标签条可见", async () => {
+    mocks.narrow = false;
+    await render();
+    await open_link("work/report.md");
+    expect(container.querySelector(".agent-pages__page-header")).toBeNull();
+    expect(container.querySelector<HTMLElement>('[role="tablist"]')!.hidden).toBe(false);
   });
 
   it("离开再回来按轻量记录恢复，在 StrictMode 重连时仍保留标签", async () => {

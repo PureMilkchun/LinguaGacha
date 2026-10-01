@@ -1,0 +1,33 @@
+export const zh_cn_file_page = {
+  picker: {
+    search: "搜索当前目录",
+    filename: "文件名",
+    selected: "已选择 {COUNT} 个文件",
+    current_directory: "选择当前目录",
+  },
+  title: "文件",
+  tab: { files: "文件", trash: "回收站" },
+  action: {
+    download: "下载",
+    up: "上级目录",
+    new_folder: "新建文件夹",
+    upload: "上传文件",
+    create_project: "用选中文件创建工程",
+    rename: "重命名",
+    delete: "移入回收站",
+    restore: "恢复",
+    purge: "彻底删除",
+    purge_all: "清空回收站",
+  },
+  kind: { directory: "目录" },
+  state: { selected: "已选中" },
+  empty: { files: "这个目录是空的", trash: "回收站是空的" },
+  upload: { done: "完成", failed: "失败" },
+  prompt: { project_name: "工程名称", new_folder: "文件夹名称", rename: "新名称" },
+  notice: {
+    project_created: "工程已创建",
+    folder_created: "文件夹已创建",
+    moved_to_trash: "已移入回收站",
+    renamed: "已重命名",
+  },
+};

@@ -10,7 +10,7 @@ const mocks = vi.hoisted(() => ({
   api_fetch: vi.fn(),
   push_toast: vi.fn(),
 }));
-vi.mock("@frontend/app/desktop/desktop-api", () => mocks);
+vi.mock("@frontend/app/desktop/desktop-api", () => ({ ...mocks, is_browser_host: () => false }));
 vi.mock("@frontend/app/feedback/desktop-toast", () => ({ push_toast: mocks.push_toast }));
 vi.mock("@frontend/app/locale/locale-context", () => ({
   useI18n: () => ({ t: (key: string) => key }),

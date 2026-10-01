@@ -1,110 +1,272 @@
-<div align=center><img width="640px"  alt="hero-wide-v1" src="https://github.com/user-attachments/assets/ca23dd6d-a676-4c6b-a33e-0a2687bff534" /></div>
-<div align=center><img src="https://img.shields.io/github/v/release/neavo/LinguaGacha"/>   <img src="https://img.shields.io/github/license/neavo/LinguaGacha"/>   <img src="https://img.shields.io/github/stars/neavo/LinguaGacha"/></div>
-<p align='center'>使用 AI 能力一键翻译 小说、游戏、字幕 等文本内容的次世代文本翻译器</p>
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/readme/hero-dark.svg">
+  <img src="docs/readme/hero-light.svg" alt="LinguaGacha NAS：部署到 NAS，用手机完成小说翻译" width="1280">
+</picture>
 
-## README 🌍
-- [ [中文](./README.md) ] | [ [English](./README_EN.md) ] | [ [日本語](./README_JA.md) ] | [ [한국어](./README_KO.md) ] | [ [Deutsch](./README_DE.md) ]
+<h1 align="center">LinguaGacha NAS</h1>
 
-## 概述 📢
-- [LinguaGacha](https://github.com/neavo/LinguaGacha) (/ˈlɪŋɡwə ˈɡɑːtʃə/)，使用 AI 技术次世代文本翻译器
-- 开箱即用，（几乎）无需设置，功能的强大，不需要通过繁琐的设置来体现
-- 支持 `中` `英` `日` `韩` `俄` `德` `法` `意` 等 16 种语言的一键互译
-- 支持 `字幕`、`电子书`、`游戏文本` 等多种文本类型与文本格式
-- 支持 `OpenAI` `Google` `Anthropic` `SakuraLLM` 等各种本地或在线接口
+<p align="center">
+  <strong>部署到 NAS，在局域网里用手机完成小说翻译。</strong><br>
+  从上传原稿、整理术语，到 Agent 协作、翻译与下载，<br>
+  一套流程在同一个界面完成，无需守在电脑前。
+</p>
 
-> <img width="2562" height="1602" alt="01" src="https://github.com/user-attachments/assets/9ab0ef8f-136b-4b45-9640-d16b451acde7" />
+<p align="center">
+  <a href="#界面一览">界面一览</a> ·
+  <a href="#开始使用">开始使用</a> ·
+  <a href="#访问最佳实践">访问方式</a> ·
+  <a href="#功能支持范围">支持范围</a> ·
+  <a href="#部署到-nas">NAS 部署</a> ·
+  <a href="#维护计划">维护计划</a>
+</p>
 
-> <img width="2570" height="1605" alt="02" src="https://github.com/user-attachments/assets/7f6d6556-d6b2-4fb1-b509-2d8272814290" />
+> 基于官方 **0.125.0**（`MANUAL_BUILD_v0.125.0`，提交 `7956576`）。本仓库是面向 NAS 与手机使用的维护分支，已包含服务器部署、文件管理器和手机界面改进。
 
-## 特别说明 ⚠️
-- 如您在翻译过程中使用了 [LinguaGacha](https://github.com/neavo/LinguaGacha) ，请在作品信息或发布页面的显要位置进行说明！
-- 如您的项目涉及任何商业行为或者商业收益，在使用 [LinguaGacha](https://github.com/neavo/LinguaGacha) 前，请先与作者联系以获得授权！
+## 为什么维护这个版本
 
-## 功能优势 📌
-- 内置 `AGENT` 模式，通过对话自动完成各种任务　`👈👈 独家绝技`
-- 极快的翻译速度，十秒钟一份字幕，一分钟一本小说，五分钟一部游戏
-- 一键生成术语表，保证角色姓名等专有名词在整部作品中的译名统一
-- 最优的翻译质量，无论是 旗舰模型 `诸如 DeepSeek-R1` 还是 本地小模型　`诸如 Qwen2.5-7B`
-- 同类应用中最强的样式与代码保留能力，显著减少后期工作量，是制作内嵌汉化的最佳选择
-  - `.md` `.ass` `.epub` 格式几乎可以保留所有原有样式
-  - 大部分的 `WOLF`、`RenPy`、`RPGMaker`、`Kirikiri` 引擎游戏无需人工处理，即翻即玩
+把 [LinguaGacha](https://github.com/neavo/LinguaGacha) 的核心翻译能力带到 NAS，让手机也能承担复杂的小说翻译任务。NAS 运行翻译服务，你在同一局域网内打开手机浏览器，就可以操作工程、整理术语、与 Agent 协作，并下载译文。
 
-## 基本流程 🛸
-- 从 [发布页](https://github.com/neavo/LinguaGacha/releases) 下载应用
-  - Windows:
-    - 根据 CPU 类型下载 `*_Windows_x64.zip` 或 `*_Windows_arm64.zip`
-    - 解压后双击 `app.exe` 启动
-  - macOS:
-    - 根据 CPU 类型下载 `*_macOS_x64.dmg` 或 `*_macOS_arm64.dmg`
-    - 拖拽到应用程序文件夹，先不要启动
-    - 打开终端输入 `sudo xattr -rd com.apple.quarantine /Applications/LinguaGacha.app` 然后回车
-    - 输入系统密码，关闭终端，可以正常运行了
-  - Linux:
-    - 根据 CPU 类型下载 `*_Linux_x64.AppImage` 或 `*_Linux_arm64.AppImage`
-    - 添加执行权限 `chmod +x LinguaGacha*.AppImage`
-    - 运行 `./LinguaGacha*.AppImage`
-- 获取一个可靠的 AI 大模型接口，推荐：
-  - [ [DeepSeek](https://github.com/neavo/LinguaGacha/wiki/DeepSeek) ]，无显卡要求
-- 准备要翻译的文本
-  - `字幕`、`电子书` 等一般不需要预处理
-  - `游戏文本` 需要根据游戏引擎选择合适的工具进行提取
-- 启动应用
-  - 将 `待翻译的文件` 拖到页面上创建项目
-  - 在 `基础设置` 中设置原文语言、译文语言等必要信息
-  - 在 `AGENT` 中选择模型，依次点击界面上预设指令完成以下步骤：
-    - `术语提取`　`👈👈 可选但推荐，对质量很重要`
-    - `全文翻译`
-    - `自动审校`　`👈👈 可选但推荐，对质量很重要`
-  - 在 `AGENT` 中点击生成译文
+本版本围绕三件事做改进：
 
-## 使用教程 📝
-- 综合
-  - [基础教程](https://github.com/neavo/LinguaGacha/wiki/BasicTutorial)　`👈👈 手把手教学，有手就行，新手必看`
-  - [高质量翻译 WOLF 引擎游戏的最佳实践](https://github.com/neavo/LinguaGacha/wiki/BestPracticeForWOLF)
-  - [高质量翻译 RenPy 引擎游戏的最佳实践](https://github.com/neavo/LinguaGacha/wiki/BestPracticeForRenPy)
-  - [高质量翻译 RPGMaker 系列引擎游戏的最佳实践](https://github.com/neavo/LinguaGacha/wiki/BestPracticeForRPGMaker)
-- 视频教程
-  - [How to Translate RPGMV with LinguaGacha and Translator++ (English)](https://www.youtube.com/watch?v=wtV_IODzi8I)
-- 功能说明
-  - [命令行模式](https://github.com/neavo/LinguaGacha/wiki/CLIMode)
-  - [术语表](https://github.com/neavo/LinguaGacha/wiki/Glossary)　　[文本保护](https://github.com/neavo/LinguaGacha/wiki/TextPreserve)　　[文本替换](https://github.com/neavo/LinguaGacha/wiki/Replacement)　　
-  - [MTool 优化器](https://github.com/neavo/LinguaGacha/wiki/MToolOptimizer)
-- 你可以在 [Wiki](https://github.com/neavo/LinguaGacha/wiki) 找到各项功能的更详细介绍，也欢迎在 [讨论区](https://github.com/neavo/LinguaGacha/discussions) 投稿你的使用心得
+1. **核心翻译流程顺畅**：保留术语表、Agent 与翻译能力，让术语准备、翻译和结果检查衔接起来。
+2. **为手机屏幕优化**：调整表格、输入区、标签页、侧栏和日志布局，让有限的屏幕空间用于常用操作。
+3. **文件管理器贯穿始终**：上传原稿、选择文件或工程、预览成果、下载译文，都在应用中完成，省去反复进入 NAS 目录翻找文件。
 
-## 文本格式 🏷️
-- 字幕 `.srt .ass`
-- 电子书 `.txt .pdf .epub`
-- Markdown `.md`
-- [RenPy](https://www.renpy.org) 导出游戏文本 `.rpy`
-- [MTool](https://mtool.app) 导出游戏文本 `.json`
-- [SExtractor](https://github.com/satan53x/SExtractor) 导出游戏文本 `.txt .json .xlsx`
-- [VNTextPatch](https://github.com/arcusmaximus/VNTranslationTools) 导出游戏文本 `.json`
-- [Translator++](https://dreamsavior.net/translator-plusplus) 项目文件 `.trans`
-- [Translator++](https://dreamsavior.net/translator-plusplus) 导出游戏文本 `.xlsx`
-- [WOLF 官方翻译工具](https://silversecond.booth.pm/items/5151747) 导出游戏文本 `.xlsx`
-- 具体示例可见 [Wiki - 支持的文件格式](https://github.com/neavo/LinguaGacha/wiki/%E6%94%AF%E6%8C%81%E7%9A%84%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F)，更多格式将持续添加，你也可以在 [ISSUES](https://github.com/neavo/LinguaGacha/issues) 中提出你的需求
+## 界面一览
 
-## 近期更新 📅
-- 20260930 v0.124.1
-  - 新增模型支持 - `GPT 6.1 Sol`
-  - 修复与改进 [#943](../../issues/943) [#944](../../issues/944) [#946](../../issues/946)
+### 01 · 术语表、Agent 与翻译，连成一套流程
 
-- 20260927 v0.124.0
-  - `AGENT` - 自定义技能
-  - 修复与改进 [#933](../../issues/933) [#934](../../issues/934) [#937](../../issues/937) [#938](../../issues/938) [#940](../../issues/940)
+为小说整理人物、地名和专有名词，通过 Agent 协作处理翻译任务，在工作台查看进度、检查结果并生成译文。核心能力保留，整套操作可以从手机浏览器完成。
 
-## 开发指南 🛠️
-- 安装 [ [Go](https://go.dev) ] 和 [ [`Node.js`](https://nodejs.org) ]
-- 安装依赖 `npm install`
-- 更新依赖 `npm ci`
-- 运行应用 `npm run dev`
-- 构建发布 `npm run build`
-- 提交 PR 前请根据改动范围执行 [`docs/WORKFLOW.md`](./docs/WORKFLOW.md) 中的对应验证
-- 非开发者请直接在 [发布页](https://github.com/neavo/LinguaGacha/releases) 下载打包版本
+下面是实际使用中的 `Interlude.epub` 工程，展示翻译进度、文件状态和生成译文入口。
 
-## 问题反馈 😥
-- 运行时的日志保存在应用根目录下的 `log` 等文件夹
-- 反馈问题的时候请附上这些日志文件
-- 你也可以来群组讨论与反馈
-  - QQ - 41763231⑥
-  - Discord - https://discord.gg/pyMRBGse75
+<p align="center">
+  <img src="docs/readme/workbench-desktop.png" alt="实际小说工程 Interlude.epub：翻译进度、文件状态与生成译文入口" width="1280">
+</p>
+
+Agent 对话中的成果链接可以直接打开，支持预览 Markdown、TXT、JSON、CSV 等文本文件，并下载到本机。
+
+<p align="center">
+  <img src="docs/readme/agent-desktop.png" alt="Agent 协作示例：整理小说术语，并打开或下载成果文件" width="1280">
+</p>
+
+<details>
+<summary><strong>查看 Agent 的 Markdown 成果预览</strong></summary>
+
+<p align="center">
+  <img src="docs/readme/report-desktop.png" alt="Agent 内的术语整理报告：Markdown 表格与下载按钮" width="1280">
+</p>
+
+</details>
+
+### 02 · 为手机屏幕重新整理界面
+
+手机上的操作空间应当留给内容。术语表保留传统表格，默认只显示三列；日志把更多高度留给频繁滚动的列表。
+
+<p align="center">
+  <img src="docs/readme/glossary-mobile.png" alt="手机术语表：默认显示原文、译文和描述三列，可自主选择显示列" width="280">&nbsp;
+  <img src="docs/readme/logs-mobile.png" alt="手机日志：上方列表占多数空间，下方显示可展开的详情" width="280">
+</p>
+
+- **术语表**：文字缩小一号，「显示列」可自主选择，并保存偏好。
+- **Agent**：输入框更紧凑，工具可折叠；「跟随最新」独立悬浮，文件标签更清楚。
+- **侧栏与字体**：手机使用抽屉导航，全界面采用系统字体。
+- **日志**：手机列表与详情约为 7:3，详情可展开细看；宽屏恢复左右排列。
+
+### 03 · 文件管理器：上传到下载，都在同一个界面
+
+新增的文件管理器连接起翻译前后两端：上传原稿后，通过目录浏览选择源文件或已有工程；生成译文后，在同一界面进入输出目录并下载。文件与成果有明确的下载入口，文本成果还可以先预览。
+
+<p align="center">
+  <img src="docs/readme/files-mobile.png" alt="手机文件管理器：实际译文目录中的 Interlude.epub 与下载入口" width="320">
+</p>
+
+上传、选工程、翻译、下载，操作都留在翻译应用里，无需切换到 NAS 文件管理页面反复寻找文件。
+
+<sub>工作台、手机术语表与译文目录来自实际工程，经所有者同意展示；Agent 对话与日志使用演示数据。截图未展示模型配置、密钥或登录信息。手机展示采用浏览器响应式模拟。</sub>
+
+## 开始使用
+
+部署完成后，首次使用先在「模型管理」配置模型接口，并在设置中选择原文和目标语言。之后，打开手机浏览器完成下面的流程。局域网内直接连接；外出时也可以通过下方介绍的飞牛远程服务访问。
+
+<p align="center">
+  <img src="docs/readme/workflow.svg" alt="手机小说翻译流程：上传原稿、选择工程、整理术语、翻译审校、下载译文" width="1280">
+</p>
+
+1. **上传原稿**：打开「文件」，上传待翻译的小说。
+2. **选择工程**：浏览目录选择源文件并新建工程，或打开已有工程。
+3. **整理术语**：按需提取人物、地名和专有名词，在术语表中检查和调整译名。
+4. **翻译与审校**：通过 Agent 或工作台执行翻译，查看进度并检查结果。
+5. **下载译文**：生成译文后，在文件页进入输出目录，点击下载按钮保存到手机。
+
+Agent 提供的成果文件也可以点击链接，先预览，再下载。`.csv` 在这里指文本成果预览，不代表独立的 CSV 翻译格式。
+
+## 访问最佳实践
+
+部署在 **飞牛 NAS（fnOS）** 后，可以按所在网络和下载需求选择访问方式。下面的三种方式来自项目所有者的实际使用经验。
+
+| 访问方式 | 上传、翻译与下载 |
+| :--- | :--- |
+| **局域网 · 浏览器直连** | 打开 `http://<NAS-IP>:8787`，在同一界面完成上传、翻译和下载。 |
+| **远程 · 飞牛网页版** | 通过网页版飞牛远程服务进入 LinguaGacha，上传、翻译和浏览器下载都可以完成。 |
+| **远程 · 飞牛 App 中转** | 可完成上传、Agent 协作和翻译；当前实测无法在 App 内直接下载，需要到 NAS 上的挂载目录取回译文。 |
+
+### 在家：浏览器直接访问
+
+手机与 NAS 处于同一局域网时，直接打开服务地址。上传小说、选择工程、整理术语、翻译和下载译文都在 LinguaGacha 内完成。
+
+### 外出：网页版远程服务完成整套流程
+
+如果希望在外也直接下载译文，可以从一开始就在手机浏览器中使用 **网页版飞牛远程服务** 进入 LinguaGacha。实际测试中，工作台、Agent 与文件管理器都可使用，译文可以通过文件页的下载按钮保存到手机。
+
+<p align="center">
+  <img src="docs/readme/fnos-remote-workbench.jpg" alt="飞牛网页版远程访问的手机真机截图：小说翻译工作台" width="280">&nbsp;
+  <img src="docs/readme/fnos-remote-agent.jpg" alt="飞牛网页版远程访问的手机真机截图：Agent 生成工程进度报告" width="280">&nbsp;
+  <img src="docs/readme/fnos-remote-files.jpg" alt="飞牛网页版远程访问的手机真机截图：译文目录与浏览器下载入口" width="280">
+</p>
+
+<p align="center"><sub>手机真机实测：翻译工作台 → Agent 协作 → 译文下载。截图中的个人远程地址已遮挡。</sub></p>
+
+### 已在飞牛 App 中：翻译后从 NAS 目录下载
+
+也可以通过飞牛 App 自带的中转服务进入应用。在「Docker」页面，从 `linguagacha` 容器的 `8787` 端口入口打开服务，即可上传原稿、操作工程和翻译。
+
+> **App 内下载限制**：当前实测环境中，飞牛 App 内打开的页面无法直接下载文件。生成译文后，可以通过飞牛的文件管理功能进入 Docker 映射到 NAS 的目录，下载输出文件。
+
+以本文 Compose 的 `./data:/data` 映射为例：
+
+```text
+应用里的译文路径
+/data/projects/Interlude_译文/Interlude.epub
+
+NAS 上对应的文件
+<部署目录>/data/projects/Interlude_译文/Interlude.epub
+```
+
+先查看 `linguagacha` 容器映射到 `/data` 的 NAS 目录，再在飞牛 App 的「文件」中进入对应的译文子目录下载。实际目录以自己的 Docker 挂载配置为准。
+
+<details>
+<summary><strong>查看飞牛 App 的 Docker 服务入口</strong></summary>
+
+<p align="center">
+  <img src="docs/readme/fnos-app-docker.jpg" alt="飞牛 App 的 Docker 页面：linguagacha 容器与 8787 端口入口" width="320">
+</p>
+
+服务入口为 `linguagacha` 容器的 `8787` 端口。
+
+</details>
+
+<sub>远程访问与 App 下载限制来自项目所有者于 2026-10-01 的真机实测；本节截图保留实际工程内容，未展示 API key 或模型配置。</sub>
+
+## 功能支持范围
+
+本项目重点维护 **NAS 上的小说翻译流程、手机使用体验，以及应用内的文件上传下载**。
+
+| 核心能力 | 当前支持 |
+| :--- | :--- |
+| 小说翻译 | EPUB、TXT 翻译、译文导出与浏览器下载已验证。 |
+| 术语表 | 保留术语管理能力，支持手机三列表格与自选显示列。 |
+| Agent | 保留对话协作能力，MD / TXT / JSON / CSV 成果支持预览和下载。 |
+| 文件管理器 | 目录浏览、上传、文件与工程选择、成果下载。 |
+| 手机界面 | 系统字体、紧凑输入区、折叠工具、抽屉侧栏与响应式日志。 |
+
+<details>
+<summary><strong>其他格式与支持边界</strong></summary>
+
+- Markdown 保留上游翻译处理器，文本成果预览与下载已验证；翻译样式保留仍需专项样例验证。
+- SRT、ASS、RPY、JSON、TRANS、XLSX 保留上游格式处理器，本维护版尚未逐格式完成端到端回归。
+- **PDF 翻译不在本项目的支持与维护范围内。**
+- 当前 NAS 版不支持 Agent 图片输入与视觉处理。
+
+</details>
+
+## 部署到 NAS
+
+当前服务器镜像采用 **Node.js 24.17.0 + Docker**，通过 `8787` 提供网页和 API。已有部署在 Linux x86_64 / fnOS 上验证。
+
+先取得本维护版源码，再构建 Docker 镜像：
+
+```bash
+git clone https://github.com/PureMilkchun/LinguaGacha.git
+cd LinguaGacha
+docker build -t linguagacha-nas:0.125-local .
+```
+
+仓库已提供 [compose.yaml](compose.yaml)，内容如下。`./data` 用于原稿、工程和输出；应用配置与日志使用命名卷保存。
+
+```yaml
+services:
+  linguagacha:
+    image: linguagacha-nas:0.125-local
+    restart: unless-stopped
+    ports:
+      - "8787:8787"
+    environment:
+      LG_API_HOST: "0.0.0.0"
+      LG_API_PORT: "8787"
+      LG_FILES_ROOT: "/data"
+    volumes:
+      - ./data:/data
+      - userdata:/app/userdata
+      - logs:/app/log
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
+volumes:
+  userdata:
+  logs:
+```
+
+```bash
+mkdir -p data
+sudo chown 1000:1000 data
+docker compose up -d
+```
+
+在同一局域网打开 `http://<NAS-IP>:8787`，然后配置模型接口。
+
+<details>
+<summary><strong>持久化、访问令牌与更新</strong></summary>
+
+- 容器使用 UID `1000`，挂载的 `data` 目录需要允许该用户写入。示例中的属主设置用于新建目录。
+- `userdata` 保存配置和应用数据，`logs` 保存运行日志；备份时也要包含 `data` 中的工程与输出。
+- 示例沿用局域网无令牌配置。`LG_ACCESS_TOKEN` 可用于启用访问令牌。
+- Agent 的临时对话与工作区成果不应当作持久备份。重建或重启容器前，先保存当前对话和成果文件。
+- NAS 浏览器版已禁用官方桌面更新弹窗，版本更新通过更换部署镜像完成。
+- 上面的镜像标签是本地构建示例；目前尚未发布公共镜像或独立维护版 Release。
+
+</details>
+
+## 维护计划
+
+以官方 0.125 为起点，后续维护围绕 NAS 部署便利性、小说翻译流程和手机操作体验展开。
+
+- [x] Node / Docker 服务器部署与浏览器桥接。
+- [x] 目录浏览、文件上传、工程选择与浏览器下载。
+- [x] 文本成果预览、三列术语表、系统字体和 Agent 界面整理。
+- [x] 手机日志列表优先、宽屏左右布局和侧栏展开修正。
+- [x] 建立 GitHub fork，保留官方 0.125 基线与上游历史。
+- [ ] 建立 PR 自动检查、版本发布与镜像发布流程。
+- [ ] 完善部署说明、持久化备份与更新回退流程。
+- [ ] 持续验证 EPUB / TXT 的术语整理、Agent 协作、翻译与下载全流程。
+- [ ] 扩充 Safari、手机 WebView 和不同屏幕比例的实际验证。
+
+`main` 保存当前 NAS 维护版，`upstream-main` 保留建仓时的官方主分支。后续功能改动通过独立分支和 PR 合入；官方升级先在合并分支中验证，再发布部署版本。
+
+开发与验证入口：
+
+- [开发工作流](docs/WORKFLOW.md)：按改动范围选择检查与测试。
+- [工程架构](docs/ARCHITECTURE.md)：了解代码与运行边界。
+- [Agent 运行机制](docs/AGENT_RUNTIME.md)：了解对话、工具与工作区。
+
+## 来源与使用说明
+
+核心翻译能力来自 **[neavo / LinguaGacha](https://github.com/neavo/LinguaGacha)**。本维护版本围绕服务器和浏览器使用做改进，保留上游署名与现有使用要求。
+
+上游 README 要求：使用 LinguaGacha 翻译时，在作品信息或发布页面说明；涉及商业行为或商业收益时，先联系原作者获得授权。完整原文保留在 [README_UPSTREAM.md](README_UPSTREAM.md)，具体以[官方 0.125 基线说明](https://github.com/neavo/LinguaGacha/blob/MANUAL_BUILD_v0.125.0/README.md)为准。
+
+---
+
+<p align="center"><sub>让 NAS 运行翻译，让手机完成操作。</sub></p>
